@@ -3,7 +3,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head} from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia'
 import { computed } from '@vue/reactivity';
-import { onMounted, reactive} from 'vue'
+import { onMounted, reactive} from 'vue';
+import LightLoader from './../Components/LightLoader.vue';
 import axios from 'axios';
 
 
@@ -22,6 +23,7 @@ const data = reactive({
     election_type_id:0,
     states:[],
     bParser:{},
+    loading:false,
     storedArray:[]
 })
 
@@ -126,12 +128,16 @@ function dataEntry(state,lga,ward,e){
 }
 
 const save = () => {  
+    data.loading =true
     Inertia.post(route('save_data_entry'), data.collectedData,{
-        onFinish: (res) => alert(res),
+        onFinish: (res) => {
+            data.loading =false
+        },
     });
 };
 
 const fetchSavedData = async ()=>{
+    data.loading = true;
     let response = await axios.post(route('get_saved_data'),data.bParser);
     let da = response.data    
     let code = '';    
@@ -146,13 +152,15 @@ const fetchSavedData = async ()=>{
         $('#'+code).find('.r_supports').val(obj.total_registered_supporters)
         $('#'+code).find('.r_voters').val(obj.total_registered_voters)
     })
+    data.loading = false
 }
 
 function storeArray(value){
    // data.storedArray.push(value)    
 }
 
-function checkIfSelected(e){
+
+function checkIfSelected(e=null, x=null){
     if(data.election_for_id !== 0 && data.election_type_id !== 0){        
         data.bParser.election_for_id =   data.election_for_id
         data.bParser.election_year_id =  props.config.election_year.id
@@ -161,6 +169,15 @@ function checkIfSelected(e){
         data.bParser.user =              props.config.user
         fetchSavedData()
     }
+    if(x=='eF'){
+        localStorage.setItem('election_for_id',data.election_for_id)
+    }
+    if(x=='eT'){
+        localStorage.setItem('election_type_id',data.election_type_id)
+    }
+}
+function getStorageItem(name){
+    return localStorage.getItem(name);
 }
 
 function getCol(matrix, col){
@@ -171,22 +188,35 @@ function getCol(matrix, col){
        return column; // return column data..
 }
 
-function showMessage(msg){
+function showMessage(msg){ 
     alert(msg)
 }
 
 onMounted(() => {
-    console.log(props.config)
+    
+    if(data.election_for_id !== 0 && data.election_type_id !== 0){            
+        checkIfSelected(); //load stored data
+    }
 })
-data.states = props.states.data 
 
+const nextBtn = async()=>{
+    window.location.href = data.states.next_page_url    
+}
 
+const prevBtn = async()=>{
+    window.location.href = data.states.prev_page_url    
+}
+
+data.election_for_id = getStorageItem('election_for_id')== null?0:getStorageItem('election_for_id');
+data.election_type_id = getStorageItem('election_type_id')==null?0:getStorageItem('election_type_id')
+data.states = props.states
 </script>
 
 <template>
   
     <Head title="Dashboard" />
-
+    <LightLoader v-if="data.loading" />
+    
     <AuthenticatedLayout>     
         <!-- <div style="display:none" class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -214,71 +244,79 @@ data.states = props.states.data
                 </div>
             </div>
         </div> -->
-        <div class=" row w-100">
-            <div class="offset-md-4 col-md-4 py-3 ">
-                <input type="text" placeholder="Search Wards" class="form-control " @keyup="searchBox($event)">
-            </div>
-            <div class="col-md-4"></div>
+        <div class=" row w-100">                        
             <div class="col-md-4 pt-2 px-4" style="height:82vh;">                
-                <div class="d-flex justify-between w-100 px-3">
+                <div class="d-flex justify-between w-100 my-3 px-3">
                     <span> Total Lga: <i class="badge bg-warning">{{config.total_lgas}}</i> Total Wards: <i class="badge bg-warning">{{config.total_wards}}</i></span>
-                    <button @click="save" class="btn btn-sm px-4  bg-success text-white">Save</button>                
+                    <button v-if="data.election_for_id !== 0 && data.election_type_id !== 0" @click="save" class="btn btn-sm px-4  bg-success text-white">Save</button>                
+                    <button v-else disabled  class="btn btn-sm px-4  bg-success text-white">Save</button>                
                 </div>
                 <ul class="px-3 py-3" style="background: #ffffffc7;border-radius: 5px;height: 95%;overflow-y:scroll">
                     <li class="label">Select States</li>
                     <li>
                         <ul class="list_state">
-                            <li v-for="state in data.states" :key="'s_k'+state.id"><a :href="'#state_'+state.id">{{state.name}}</a></li>
+                            <li v-for="state in data.states.data" :key="'s_k'+state.id"><a :href="'#state_'+state.id">{{state.name}}</a></li>
                         </ul>
                     </li>
                     <li class="label mt-3"> Settings </li>
                     <li>
                         <label>Election For:</label>
-                        <select @change="checkIfSelected($event)" v-model="data.election_for_id" class="form-control">
+                        <select @change="checkIfSelected($event,'eF')" v-model="data.election_for_id" class="form-control">
                             <option v-for="elect in config.election_for" :key="'el'+elect.id" :value="elect.id">{{elect.name}}</option>
                         </select>
                     </li>
                     <li>
                         <label>Election Type:</label>
-                        <select @change="checkIfSelected($event)" v-model="data.election_type_id" class="form-control">
-                            <option v-for="elect in config.election_types" :key="'tl'+elect.id" :value="elect.id">{{elect.name}}</option>
+                        <select @change="checkIfSelected($event,'eT')" v-model="data.election_type_id" class="form-control">
+                            <option v-for="elect in config.election_types"  :key="'tl'+elect.id" :value="elect.id">{{elect.name}}</option>
                         </select>
                     </li>
                 </ul>
             </div>
-            <div class="col-md-4 pt-5 card-v" >
-                
-                <div v-for="state in data.states" :key="'s_'+state.id" :id="'state_'+state.id">
-                <label class="label text-center w-100">{{state.name}} State</label>
-                <div class="lga_container"  v-for="(lga) in state.lgas" :key="'l_'+lga.id" :data-text="[...getCol(lga.wards,'name')]">
-                    
-                    <label style="width: 100%;margin: 14px 0px 7px 0px;border-bottom: 2px solid #fff;font-weight: bold;" class="float-right">
-                    {{lga.name}} L.G.A </label>
-                    
-                    <table class="w-100">
+            <div class="col-md-4 p-0" > 
+                <input type="text" placeholder="Search Wards" class="form-control my-3  " @keyup="searchBox($event)">
+                <div class="card-v px-2 pt-2">                
+                    <div v-for="state in data.states.data" :key="'s_'+state.id" :id="'state_'+state.id">
+                    <label class="label text-center w-100">{{state.name}} State</label>
+                    <div class="lga_container"  v-for="(lga) in state.lgas" :key="'l_'+lga.id" :data-text="[...getCol(lga.wards,'name')]">
+                        
+                        <label style="width: 100%;margin: 14px 0px 7px 0px;border-bottom: 2px solid #fff;font-weight: bold;" class="float-right">
+                        {{lga.name}} L.G.A </label>
+                        
+                        <table class="w-100">
+                                <tbody>
+                                    <tr>
+                                        <th class="text-center" width="50%">Wards</th><th width="25%">R Voters</th><th width="25%">R Supporters</th>
+                                    </tr>
+                                </tbody>
+                        </table>
+                        <table :title="lga.name+', '+state.name+ ' State'" class="clear-float w-100">
                             <tbody>
-                                <tr>
-                                    <th class="text-center" width="50%">Wards</th><th width="25%">R Voters</th><th width="25%">R Supporters</th>
+                                <tr  v-for="(ward, i) in lga.wards" :key="'w'+ward.id" :id="state.id+'_'+lga.id+'_'+ward.id">
+                                    {{storeArray(state.id+'_'+lga.id+'_'+ward.id)}}
+                                    <td width="50%" class="wardTag"><span>{{i+1}}.</span><span class="wardTagText">{{ward.name.slice(0,15)}}</span></td>
+                                    <td width="25%" >
+                                        <input v-if="data.election_for_id !== 0 && data.election_type_id !== 0" title="total registered voters" @focusout="removeOnName($event)"  @focus="lightName($event)" @keyup="dataEntry(state,lga,ward,$event)" type="number" min="0" class="form-control r_voters ">
+                                        <input tabindex="1" @click="showMessage('Select Election Type and Election For to Open this fields')" v-else title="total registered voters" disabled type="number" min="0" class="form-control ">
+                                    </td>
+                                    <td width="25%">
+                                        <input v-if="data.election_for_id !== 0 && data.election_type_id !== 0" title="total supporters" @focusout="removeOnName($event)" @focus="lightName($event)" @keyup="dataEntry(state,lga,ward,$event)" type="number" min="0" class="form-control r_supports">
+                                        <input @click="showMessage('Select Election Type and Election For to Open this fields')" v-else title="total registered Supporters " disabled type="number" min="0" class="form-control ">
+                                    </td>
                                 </tr>
                             </tbody>
-                    </table>
-                    <table :title="lga.name+', '+state.name+ ' State'" class="clear-float w-100">
-                        <tbody>
-                            <tr  v-for="(ward, i) in lga.wards" :key="'w'+ward.id" :id="state.id+'_'+lga.id+'_'+ward.id">
-                                {{storeArray(state.id+'_'+lga.id+'_'+ward.id)}}
-                                <td width="50%" class="wardTag"><span>{{i+1}}.</span><span class="wardTagText">{{ward.name.slice(0,15)}}</span></td>
-                                <td width="25%" >
-                                    <input v-if="data.election_for_id !== 0 && data.election_type_id !== 0" title="total registered voters" @focusout="removeOnName($event)"  @focus="lightName($event)" @keyup="dataEntry(state,lga,ward,$event)" type="number" min="0" class="form-control r_voters ">
-                                    <input tabindex="1" @click="showMessage('Select Election Type and Election For to Open this fields')" v-else title="total registered voters" disabled type="number" min="0" class="form-control ">
-                                </td>
-                                <td width="25%">
-                                    <input v-if="data.election_for_id !== 0 && data.election_type_id !== 0" title="total supporters" @focusout="removeOnName($event)" @focus="lightName($event)" @keyup="dataEntry(state,lga,ward,$event)" type="number" min="0" class="form-control r_supports">
-                                    <input @click="showMessage('Select Election Type and Election For to Open this fields')" v-else title="total registered Supporters " disabled type="number" min="0" class="form-control ">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>                
-                </div>            
+                        </table>                
+                    </div>            
+                    </div>
+                </div>               
+                <div class="pt-2">
+                    <button @click="prevBtn" v-if="states.prev_page_url !== null" class="btn bg-light mx-1 shadow">Prev</button>
+                    <button v-else disabled class="btn bg-light mx-1 shadow">Prev</button>
+                    <button @click="nextBtn" v-if="states.next_page_url !== null" class="btn bg-light mx-1 shadow">Next</button>
+                    <button v-else disabled class="btn bg-light mx-1 shadow">Next</button>
+                    <spa>
+                        From State {{states.from}} to {{states.to}} of {{states.total}}
+                    </spa>
                 </div>
             </div>
             <div class="col-md-4">  </div>
@@ -319,7 +357,7 @@ tr>td:first-child{
     margin-top: 6px;
 }
 .card-v{
-    max-height: 82vh;
+    max-height: 76vh;
     overflow-y: scroll;
     border-radius: 8px;
     border-top: 1px solid rgb(204, 204, 204);

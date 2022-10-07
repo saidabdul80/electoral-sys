@@ -47,7 +47,7 @@ class DataUpload extends Controller
             }
             $states = State::with(['lgas'=>function($query) use($lgas){
                 $query->whereIn('id', $lgas)->with('wards');
-            }])->whereIn('id', $state_ids)->paginate(5);   
+            }])->whereIn('id', $state_ids)->paginate(2);   
             
             $total_states = sizeof($state_ids);
             $total_lgas = sizeof($lgas);
