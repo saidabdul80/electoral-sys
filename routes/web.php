@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DataUpload;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -29,8 +30,7 @@ Route::get('/data-upload', [DataUpload::class,'index'])->middleware(['auth', 've
 Route::post('/save_data_entry', [DataUpload::class,'save'])->middleware(['auth', 'verified'])->name('save_data_entry');
 Route::post('/get_saved_data', [DataUpload::class,'getData'])->middleware(['auth', 'verified'])->name('get_saved_data');
 
-Route::get('/dashboard', function () {    
-    return Inertia::render('AdminDashboard');
-})->middleware(['auth', 'verified', 'adminAuth'])->name('dashboard');
+Route::get('/dashboard',[Dashboard::class,'index'])->middleware(['auth', 'verified', 'adminAuth'])->name('dashboard');
+Route::post('/get_data',[Dashboard::class,'getData'])->middleware(['auth', 'verified', 'adminAuth'])->name('get_data');
 
 require __DIR__.'/auth.php';

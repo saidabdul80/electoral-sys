@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head} from '@inertiajs/inertia-vue3';
-import { Inertia } from '@inertiajs/inertia'
+import { Inertia,Link } from '@inertiajs/inertia'
 import { computed } from '@vue/reactivity';
 import { onMounted, reactive} from 'vue';
 import LightLoader from './../Components/LightLoader.vue';
@@ -41,32 +41,7 @@ const props = defineProps({
         return data.states.reduce((a,b)=>a + b.lgas.reduce((c,d)=> c + d.wards.length,0),0);
     })
  */
-function trigerLgas(){
-    data.lga_ready =false
-    // let state = document.getElementById('state_id').value;    
-    props.states.every((item) =>{
-        if(item.id == data.state_id ){
-            data.lgas = item.lgas                        
-            data.lga_ready =true
-            return false
-        }
-        return true
-    })    
-}
 
-function trigerWards(){
-    data.ward_ready =false
-    // let state = document.getElementById('state_id').value;    
-    data.lgas.every((item) =>{
-        if(item.id == data.lga_id ){
-            console.log(item)
-            data.wards = item.wards                        
-            data.ward_ready =true
-            return false
-        }
-        return true
-    })    
-}
 function lightName(e){        
     e.target.parentElement.parentElement.firstElementChild.classList.add('highlight');    
 }
@@ -113,7 +88,7 @@ function dataEntry(state,lga,ward,e){
         total_registered_voters:Array.from(inputs)[0].value,
         total_registered_supporters:Array.from(inputs)[1].value,        
         election_year_id: props.config.election_year.id,
-        election_month_id:props.config.election_month.id,
+        election_month_id: props.config.election_month.id,
         election_for_id:data.election_for_id,
         election_type_id:data.election_type_id,
         created_by: props.config.user.id,
@@ -200,11 +175,13 @@ onMounted(() => {
 })
 
 const nextBtn = async()=>{
-    window.location.href = data.states.next_page_url    
+    //window.location.href = data.states.next_page_url    
+    Inertia.visit(data.states.next_page_url, { method: 'get' })
 }
 
 const prevBtn = async()=>{
-    window.location.href = data.states.prev_page_url    
+    //window.location.href = data.states.prev_page_url    
+    Inertia.visit(data.states.prev_page_url, { method: 'get' })
 }
 
 data.election_for_id = getStorageItem('election_for_id')== null?0:getStorageItem('election_for_id');

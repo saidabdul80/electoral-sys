@@ -65,10 +65,17 @@ class DataUpload extends Controller
     public function save(Request $request){
         $data = $request->all();        
         foreach($data as $datum => $value){            
-            $data[]=$value;
+            if($value['total_registered_voters']=='' && $value['total_registered_supporters']=='' ){}
+            else{
+                $data[]=$value;
+            }
             unset($data[$datum]);
         }
-        Data::upsert($data,['data_token'],['total_registered_voters','total_registered_supporters']);
+        try{
+            Data::upsert($data,['data_token'],['total_registered_voters','total_registered_supporters']);
+        }catch(\Exception $e){
+            return explode('(SQL:',$e->getMessage())[0];
+        }
         return "<h1 class='text-center'>Saved Successfully</h1>";
     }
 

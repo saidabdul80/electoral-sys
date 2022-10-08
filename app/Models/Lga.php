@@ -12,4 +12,16 @@ class Lga extends Model
     public function wards(){
        return $this->hasMany(Ward::class);
     }
+
+
+    public function getWardCountAttribute() {       
+        
+        $num = Ward::where('lga_id',$this->id)->count();        
+        return "{$num}";
+    }
+    public function state(){
+     return $this->belongsTo(State::class);
+    }
+    protected $appends = ['ward_count'];
+
 }
