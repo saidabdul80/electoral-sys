@@ -72,26 +72,44 @@ function check_if_all_are_hidden(elt)
     return all_are_hidden;
 }
 
+function getPer(v,s){         
+    return parseInt( (parseInt(s)/parseInt(v)) * 100);
+}
+function colorCode(v,s){
+    if(getPer(v,s) < 40){            
+        return 'poor'
+    }
+    if(getPer(v,s) > 39 && getPer(v,s) < 59){
+        return 'normal'
+    }
+    if(getPer(v,s) >58 ){
+        return 'strong' 
+    }
+}
 function dataEntry(state,lga,ward,e){
     let elt = $(e.target).parent().parent().find(':first-child');
     let inputs = e.target.parentElement.parentElement.querySelectorAll("input[type=number]")
-
+    let voters = Array.from(inputs)[0].value;
+    let supporters = Array.from(inputs)[1].value;
     let charCode = (e.which) ? e.which : e.keyCode;
     if (charCode > 31 && (charCode < 48 || charCode > 57)) {
         return false;
     }
-    
+    let flag = colorCode(voters,supporters)
+    let per = getPer(voters,supporters)
     data.collectedData[state.name+lga.id+ward.id] = {
         state_id:state.id,
         lga_id:lga.id,
         ward_id:ward.id,
-        total_registered_voters:Array.from(inputs)[0].value,
-        total_registered_supporters:Array.from(inputs)[1].value,        
+        total_registered_voters:voters,
+        total_registered_supporters:supporters,        
         election_year_id: props.config.election_year.id,
         election_month_id: props.config.election_month.id,
         election_for_id:data.election_for_id,
         election_type_id:data.election_type_id,
         created_by: props.config.user.id,
+        flag:flag,
+        percentage:per,
         data_token: state.name+lga.id+ward.id+data.election_type_id+data.election_for_id+props.config.election_month.id+props.config.election_year.id
     } 
         
