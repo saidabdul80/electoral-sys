@@ -19,9 +19,14 @@ class Lga extends Model
         $num = Ward::where('lga_id',$this->id)->count();        
         return "{$num}";
     }
+
+    public function getCheckedAttribute() {                  
+        $true = true;
+        return 'true';
+    }
     public function state(){
      return $this->belongsTo(State::class);
     }
-    protected $appends = ['ward_count'];
+    protected $appends = ['ward_count', 'checked'];
 
 }

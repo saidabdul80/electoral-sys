@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\UserController;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
+
 
 class RegisteredUserController extends Controller
 {
@@ -32,7 +35,7 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request)
+    public function store(Request $request, Event $event)
     {
         $request->validate([
             'first_name' => 'required|string|max:255',
@@ -40,18 +43,25 @@ class RegisteredUserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
+
+        $lgas = implode(',',array_column(array_filter($request->lgas, function($item){
+            if($item['checked']==true){
+                return $item;
+            }
+        }),'id'));
         
         $user = User::create([
             'first_name' => $request->first_name,
             'surname' => $request->surname,
+            'states' => implode(',',$request->states),
+            'lgas' => $lgas,
+            'role'=>$request->role,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-
-        event(new Registered($user));
-
-        Auth::login($user);
-
-        return redirect('/data-upload');
+        dd(2);
+        $uController = new UserController;
+        return $uController->index('Registered Successively');              
+        //event(new UserController);                
     }
 }

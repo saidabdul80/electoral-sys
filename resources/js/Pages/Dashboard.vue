@@ -7,6 +7,7 @@ import './../dtables/datatables.min.js'
 import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import LightLoader from './../Components/LightLoader.vue';
+import Panel from './Panel.vue';
 const props = defineProps({   
     user: Object,
     config:Object,
@@ -285,6 +286,7 @@ function colorCode(v,s){
     <div>
         <LightLoader v-if="data.loading" />       
         <div class="config-x">
+            <Panel />
             <i  @click="toggleConfig($event)" class=" bg-primary config-toggler ">
                 <i class="bi bi-arrow-right-short text-white config-toggler-ico"></i>
             </i>
@@ -296,7 +298,7 @@ function colorCode(v,s){
                 <ul class="px-3 py-3" style="background: #ffffffc7;border-radius: 5px;">
                     <li>  
                         <label>States</label>                      
-                        <select @change="trigerLgas()" v-model="data.queries.state_id" type="text" class="form-control">
+                        <select  @change="trigerLgas()" v-model="data.queries.state_id" type="text" class="form-control">
                             <option value="0">-</option>
                             <option v-for="(state) in states" :key="state.id" :value="state.id">{{state.name}}</option>
                         </select>   
