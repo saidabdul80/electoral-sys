@@ -21,6 +21,8 @@ class User extends Authenticatable
         'first_name',
         'surname',
         'email',
+        'lgas',
+        'states',
         'password',
     ];
 
@@ -42,4 +44,24 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getLgasIdAttribute() {       
+        $lga_ids = Lga::whereIn('id', explode(',',$this->lgas))->get();        
+        if(!empty($lga_ids)){            
+            return $lga_ids;
+        }else{
+            return [];
+        }
+    }
+/* 
+    public function getStatesIdAttribute() {       
+        $lga_ids = State::whereIn('id', explode(',',$this->states))->get();        
+        if(!empty($lga_ids)){            
+            return $lga_ids;
+        }else{
+            return [];
+        }
+    } */
+
+    protected $appends = ['lgas_id'];
 }

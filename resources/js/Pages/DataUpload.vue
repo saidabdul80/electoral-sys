@@ -1,7 +1,11 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head} from '@inertiajs/inertia-vue3';
-import { Inertia,Link } from '@inertiajs/inertia'
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import TextInput from '@/Components/TextInput.vue';
+import { Head, useForm, Link} from '@inertiajs/inertia-vue3';
+import { Inertia } from '@inertiajs/inertia'
 import { computed } from '@vue/reactivity';
 import { onMounted, reactive} from 'vue';
 import LightLoader from './../Components/LightLoader.vue';
@@ -26,11 +30,29 @@ const data = reactive({
     loading:false,
     storedArray:[]
 })
+const form = useForm({
+    state_lga_ward: '',
+    terms: false,
+ });
 
+const formRecord = useForm({
+    records: '',
+    election_for_id: 0,
+    election_type_id: 0,
+    election_month_id: 0,
+    election_year_id: 0,
+    terms: false,
+});
 
 const props = defineProps({
     states: Array,   
     config:Object, 
+    msg:{
+        type:String,
+        default:function(){
+            return null;
+        }
+    }
 })
     /* const totalLga = computed(()=>{
         
@@ -189,7 +211,10 @@ onMounted(() => {
     
     if(data.election_for_id !== 0 && data.election_type_id !== 0){            
         checkIfSelected(); //load stored data
-    }
+    }   
+   /*  $("iframe").on('click',function(){
+        parent.$.magnificPopup.close();
+    }) */
 })
 
 const nextBtn = async()=>{
@@ -202,6 +227,22 @@ const prevBtn = async()=>{
     Inertia.visit(data.states.prev_page_url, { method: 'get' })
 }
 
+const submit = () => {
+    form.post(route('upload_slw'), {
+        onFinish: () => form,
+    });
+};
+
+const submit2 = () => {
+    formRecord.election_for_id = data.election_for_id;
+    formRecord.election_type_id = data.election_type_id;
+    formRecord.election_month_id = props.config.election_month.id;
+    formRecord.election_year_id = props.config.election_year.id
+
+    formRecord.post(route('upload_records'), {
+        onFinish: () => formRecord,
+    });
+};
 data.election_for_id = getStorageItem('election_for_id')== null?0:getStorageItem('election_for_id');
 data.election_type_id = getStorageItem('election_type_id')==null?0:getStorageItem('election_type_id')
 data.states = props.states
@@ -268,7 +309,7 @@ data.states = props.states
                     </li>
                 </ul>
             </div>
-            <div class="col-md-4 p-0" > 
+            <div class="col-md-4 p-0" >  
                 <input type="text" placeholder="Search Wards" class="form-control my-3  " @keyup="searchBox($event)">
                 <div class="card-v px-2 pt-2">                
                     <div v-for="state in data.states.data" :key="'s_'+state.id" :id="'state_'+state.id">
@@ -314,7 +355,43 @@ data.states = props.states
                     </spa>
                 </div>
             </div>
-            <div class="col-md-4">  </div>
+            <div class="col-md-4"> 
+                <div v-if="$page.props.auth.user">
+                    <div v-if="$page.props.auth.user.role=='admin'">
+                        <form @submit.prevent="submit" enctype="multipart/form-data">                        
+                            <div>
+                                <InputLabel for="state_lga_ward" value="State Lga Ward File" />                                
+                                <input id="state_lga_ward" @input="form.state_lga_ward = $event.target.files[0]"  type="file" class="form-control  mt-1 block w-full" />
+                                <progress v-if="form.progress" :value="form.progress.percentage" max="100">
+                                    {{ form.progress.percentage }}%
+                                </progress>
+                                <InputError class="mt-2" :message="form.errors.state_lga_ward" />
+                            </div>                            
+                            <div class="flex items-center justify-end mt-4">
+                                <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                                    Upload States Lgas Wards
+                                </PrimaryButton>
+                            </div>                    
+                        </form>  
+                        <form class="mt-5" @submit.prevent="submit2" enctype="multipart/form-data">                        
+                            <div>
+                                <InputLabel for="records" value="State Lga Ward File" />
+                                <TextInput id="records" type="file" class="form-control mt-1 block w-full" @input="formRecord.records = $event.target.files[0]"/>
+                                <progress v-if="formRecord.progress" :value="formRecord.progress.percentage" max="100">
+                                    {{ formRecord.progress.percentage }}%
+                                </progress>
+                                <InputError class="mt-2" :message="formRecord.errors.records" />
+                            </div>           
+                            <p><code>Note:</code> This record will be upload with the selected options in settings</p>                 
+                            <div class="flex items-center justify-end mt-2">
+                                <PrimaryButton class="ml-4" :class="{ 'opacity-25': formRecord.processing }" :disabled="form.processing">
+                                    Upload Record
+                                </PrimaryButton>
+                            </div>                     
+                        </form>  
+                    </div>
+                </div>
+            </div>
         </div>
     </AuthenticatedLayout>    
 </template>
