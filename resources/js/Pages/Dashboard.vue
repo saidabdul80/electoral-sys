@@ -135,7 +135,9 @@ const fetchResultData = async ()=>{
             ['#cd8303','#c35','#199954'],
             ['#fff','#fff'],false
         )
-        genTable()
+        genTable('.table1' , 'analysis_chart_by_state')
+        genTable('.table2' , 'analysis_chart_by_lga')
+        genTable('.table3' , 'analysis_chart_by_ward')
         data.loading = false
     },1000)
 }
@@ -185,8 +187,13 @@ onMounted(()=>{
     
 })
 
-function genTable(){
-    $('.genTables').DataTable({
+function genTable(name, canvasId){        
+    let canvas = ""    
+    setTimeout(() => {
+        canvas = document.getElementById(canvasId);                          
+    }, 1000);
+ 
+    $(name).DataTable({
         pageLength:13,
         destroy:true,
         lengthChange:false ,
@@ -194,8 +201,21 @@ function genTable(){
         buttons: [
             'colvis',
             'excel',
-            'print'
-        ]   
+            {
+                extend: 'print',
+                customize: function ( win ) {                                            
+                        $(win.document.body)
+                            .css( 'font-size', '10pt' )
+                            .prepend(
+                                `<div style="display:flex;justify-content:center;align-item:center"><img src="${canvas.toDataURL()}" /></div>`
+                            );
+                        
+                        $(win.document.body).find( 'table' )
+                            .addClass( 'compact' )
+                            .css( 'font-size', 'inherit' );                                    
+                }
+            }
+        ]        
     });
 }
 function getMonthName(){
@@ -464,7 +484,7 @@ function getColorCode(v){
             <div class="col-md-8 my-3 cot" v-if="!data.loading2">
                 <div class="pl-3 fw-bold bg-white rounded shadow text-danger">Anylytics Accross State</div>
                 <div class="card-h" style="box-shadow: #444 1px 3px 10px -8px;border-radius: 7px;padding: 5px 20px">             
-                    <table class="table w-100 table-sm table-bordered genTables   table-hover">
+                    <table  class="table1 table w-100 table-sm table-bordered genTables   table-hover">
                         <thead>
                             <tr>
                                 <td width="40%">State</td>
@@ -497,7 +517,7 @@ function getColorCode(v){
             <div class="col-md-8 my-3 cot " v-if="!data.loading2">      
                 <div class="pl-3 fw-bold shadow rounded bg-white text-danger">Anylytics Accross L.G.A</div>
                 <div class="card-h" style="box-shadow: #444 1px 3px 10px -8px;border-radius: 7px;padding: 5px 20px">             
-                    <table class="w-100 table table-sm table-bordered genTables  table-hover ">
+                    <table  class="table2 w-100 table table-sm table-bordered genTables  table-hover">
                         <thead>
                             <tr>
                                 <td width="40%">L.G.A</td>
@@ -530,7 +550,7 @@ function getColorCode(v){
             <div class="col-md-8 my-3 cot " v-if="!data.loading2"> 
                 <div class="pl-3 fw-bolder shadow rounded bg-white text-danger">Anylytics Accross Wards</div>
                 <div class="card-h" style="box-shadow: #444 1px 3px 10px -8px;border-radius: 7px;padding: 5px 20px">             
-                    <table class="table table-sm table-bordered genTables  table-hover ">
+                    <table  class="table3 table table-sm table-bordered genTables  table-hover ">
                         <thead>
                             <tr>
                                 <td width="35%">L.G.A</td>
