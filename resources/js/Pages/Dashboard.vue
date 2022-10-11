@@ -213,6 +213,10 @@ function genTable(name, canvasId){
                         $(win.document.body).find( 'table' )
                             .addClass( 'compact' )
                             .css( 'font-size', 'inherit' );                                    
+                },
+                title: function(){
+                    var printTitle = canvasId.replaceAll('_', ' ');
+                    return printTitle
                 }
             }
         ]        
