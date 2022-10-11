@@ -75,10 +75,10 @@ class Dashboard extends Controller
         
         /* by state */        
         $overall = DB::select(DB::raw("select sum(d.total_registered_supporters) total_s,sum(d.total_registered_voters) total_v, d.percentage, d.flag from data as d where $nquery d.deleted_at IS NULL"));        
-        $rByState = DB::select(DB::raw("select sum(d.total_registered_supporters) total_s,sum(d.total_registered_voters) total_v, d.percentage, d.flag, d.state_id, s.name from data as d inner join states s on s.id= d.state_id where $nquery d.deleted_at IS NULL group by d.state_id"));        
-        $rByLga = DB::select(DB::raw("select sum(d.total_registered_supporters) total_s,sum(d.total_registered_voters) total_v, d.percentage, d.flag, d.lga_id, l.name from data as d inner join lgas l on l.id= d.lga_id where $nquery d.deleted_at IS NULL group by d.lga_id"));        
+        $rByState = DB::select(DB::raw("select sum(d.total_registered_supporters) total_s,sum(d.total_registered_voters) total_v, round(((sum(d.total_registered_supporters)/sum(d.total_registered_voters))*100)) percentage, d.flag, d.state_id, s.name from data as d inner join states s on s.id= d.state_id where $nquery d.deleted_at IS NULL group by d.state_id"));        
+        $rByLga = DB::select(DB::raw("select sum(d.total_registered_supporters) total_s,sum(d.total_registered_voters) total_v,round(((sum(d.total_registered_supporters)/sum(d.total_registered_voters))*100)) percentage, d.flag, d.lga_id, l.name from data as d inner join lgas l on l.id= d.lga_id where $nquery d.deleted_at IS NULL group by d.lga_id"));        
         
-        $rByWard = DB::select(DB::raw("select d.total_registered_supporters total_s,d.total_registered_voters total_v, d.percentage, d.flag, d.ward_id, w.name from data as d inner join wards w on w.id= d.ward_id where $nquery d.deleted_at IS NULL "));                
+        $rByWard = DB::select(DB::raw("select d.total_registered_supporters total_s,d.total_registered_voters total_v, d.percentage, d.flag, d.ward_id, w.name, l.name lga from data as d inner join wards w on w.id= d.ward_id inner join lgas l on l.id=w.lga_id where $nquery d.deleted_at IS NULL "));                
 
         $rByWardFlag = DB::select(DB::raw("select sum(d.id) as total, flag from data as d where $nquery d.deleted_at IS NULL group by d.flag"));                
         

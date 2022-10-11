@@ -14,7 +14,18 @@ const props = defineProps({
     states:Array
 })
 const data = reactive({
-    
+    poor:{
+        c:"#dd0000",
+        b:"#dd000022"
+    },
+    normal:{
+        c:"rgb(249, 135, 3)",
+        b:"rgba(249, 135, 3,.2)"
+    },
+    strong:{
+        c:"#198754",
+        b:"#1987543d"
+    },
     lgas:[],
     wards:[],
     loading:false,
@@ -67,6 +78,18 @@ function trigerWards(){
         return true
     })    
 }
+function getTheCode (val, s = 0){
+    
+    if(colorCode(val, s) === 'poor'){
+        return data.poor.c
+    }
+    if(colorCode(val, s) === 'normal'){
+        return data.normal.c
+    }
+    if(colorCode(val,s) === 'strong'){ 
+        return data.strong.c
+    }
+}
 const fetchResultData = async ()=>{
     data.loading = true;
     data.loading2 = true;
@@ -84,9 +107,9 @@ const fetchResultData = async ()=>{
                         data.results.overall,
                         ['Supporters','Voters'],
                         'Overall Count',
-                        ['#199954','#c35'],
+                        [colorCodeCode(data.results.overall[1],data.results.overall[0]), '#47b'],
                         ['#fff','#fff']
-                        )
+                        ) 
                         
         overAllAnalysis(
                         'analysis_chart_by_state', 
@@ -249,10 +272,10 @@ function overAllAnalysis(idx, data,label,text,background,bcolor,con=true){
                 },            
                 datalabels: {
                     formatter: (value, ctx) => {
-                        if(con){
+             /*            if(con){
                             const datapoints = ctx.chart.data.datasets[0].data
-                            return parseInt( (value/datapoints[1]) *100) +'%'
-                        }
+                            return parseInt( (value/parseInt(datapoints[1])+ parseInt(datapoints[0])) *100) +'%'
+                        } */
                         const datapoints = ctx.chart.data.datasets[0].data
                         let sum = datapoints.reduce((a,b)=> parseInt(a)+ parseInt(b),0)                        
                         return parseInt( (value/sum) *100) +'%'
@@ -264,9 +287,11 @@ function overAllAnalysis(idx, data,label,text,background,bcolor,con=true){
         }
         });
 }
+
 function getPer(v,s){         
     return parseInt( (parseInt(s)/parseInt(v)) * 100);
 }
+
 function colorCode(v,s){
     if(getPer(v,s) < 40){            
         return 'poor'
@@ -278,7 +303,33 @@ function colorCode(v,s){
         return 'strong' 
     }
 }
+function getRealPer(v,s){         
+    return parseInt( parseInt(s)/(parseInt(s)+parseInt(v)) * 100);
+}
 
+function colorCodeCode(v,s){
+    if(getRealPer(v,s) < 40){            
+        return data.poor.c
+    }
+    if(getRealPer(v,s) > 39 && getRealPer(v,s) < 59){
+        return data.normal.c
+    }
+    if(getRealPer(v,s) >58 ){
+        return data.strong.c
+    }
+}
+
+function getColorCode(v){
+    if(v< 40){            
+        return 'poor'
+    }
+    if(v > 39 && v < 59){
+        return 'normal'
+    }
+    if(v >58 ){
+        return 'strong' 
+    }
+}
 </script>
 
 <template>
@@ -422,13 +473,13 @@ function colorCode(v,s){
                             </tr>
                         </thead>
                         <tbody class="for_state_analytics">
-                            <tr v-for="state in data.results.state" :key="'sk'+state.id" :class="state.flag">
-                                <td>{{state.name}} <span style="visibility:hidden">{{state.flag}}</span></td>
-                                <td>{{state.total_v}}</td>
+                            <tr v-for="state in data.results.state" :key="'sk'+state.id" :class="getColorCode(state.percentage)">
+                                <td>{{state.name}} <span style="visibility:hidden">{{getColorCode(state.percentage)}}</span></td>
+                                <td>{{state.total_v}} </td>
                                 <td class="d-flex justify-between">
                                     <span>{{state.total_s}} </span>            -                         
                                     <span class="badge bg-white text-dark fw-bold">{{state.percentage}}% </span>
-                                </td>
+                                </td> 
                             </tr>
                         </tbody>
                     </table>
@@ -455,8 +506,8 @@ function colorCode(v,s){
                             </tr>
                         </thead>
                         <tbody class="for_lga_analytics">
-                            <tr v-for="lga in data.results.lga" :key="'sk'+lga.id" :class="lga.flag">
-                                <td>{{lga.name}} <span style="visibility:hidden">{{lga.flag}}</span></td>
+                            <tr v-for="lga in data.results.lga" :key="'sk'+lga.id" :class="getColorCode(lga.percentage)">
+                                <td>{{lga.name}} <span style="visibility:hidden">{{getColorCode(lga.percentage)}}</span></td>
                                 <td>{{lga.total_v}}</td>
                                 <td class="d-flex justify-between">
                                     <span>{{lga.total_s}} </span>            -                         
@@ -482,13 +533,15 @@ function colorCode(v,s){
                     <table class="table table-sm table-bordered genTables  table-hover ">
                         <thead>
                             <tr>
-                                <td width="40%">Ward</td>
-                                <td width="30%">Total Registered Voters</td>
+                                <td width="35%">L.G.A</td>
+                                <td width="35%">Ward</td>
+                                <td width="10%">Total Registered Voters</td>
                                 <td width="30%">Total Supporters</td>
                             </tr>
                         </thead>
                         <tbody class="for_ward">
                             <tr v-for="ward in data.results.ward" :key="'skw'+ward.id" :class="ward.flag">
+                                <td>{{ward.lga}}</td>
                                 <td>{{ward.name}} <span style="visibility:hidden">{{ward.flag}}</span></td>
                                 <td>{{ward.total_v}}</td>
                                 <td class="d-flex justify-between">
@@ -567,18 +620,20 @@ div.dataTables_wrapper div.dataTables_info{
 
 }
 .poor{
-    color: #dc3545!important;
-    background: #dc354545;
+    color: v-bind(data.poor.c)  !important;
+    background:v-bind(data.poor.b) !important;
 }
+
 .strong{
-    color:#198754 !important;
-    background:#1987543d !important;
+    color: v-bind(data.strong.c) !important;
+    background:v-bind(data.strong.b) !important;
 }
 
 .normal{
-    color:#ad8303 !important;
-    background:#ffc1073d !important;
+    color: v-bind(data.normal.c) !important;
+    background:v-bind(data.normal.b) !important;
 }
+
 .cot{
     cursor: pointer;
 }

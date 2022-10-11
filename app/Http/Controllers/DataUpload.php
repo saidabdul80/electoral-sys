@@ -316,7 +316,7 @@ class DataUpload extends Controller
         return "<div style='display:flex;flex-direction:column; justify-content:center;align-item:center;height:100%'><h1 style='background:#2c61;color:#2c6; border:1px solid #2c6; border-radius:7px; text-align:center;padding:25px;'>Uploaded Successfully</h1><a href='' style='margin-top:30px; padding:10px 23px; background:#2c6; color white;border-radius:5px;'>Ok</a></div>";        
     }
     public function getPer($v,$s){         
-        return intval( (intval($s)/intval($v)) * 100);
+        return floor( ($s/$v) * 100);
     }
     public function colorCode($v,$s){
         if($this->getPer($v,$s) < 40){            
