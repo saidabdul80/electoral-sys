@@ -19,7 +19,7 @@ class AdminAuth
     public function handle(Request $request, Closure $next)
     {
 
-        $path = base_path().'\app\Http\controllers';
+     /*    $path = base_path().'\app\Http\controllers';
         if ($handle = opendir($path)) {
             if(Carbon::today()->format('Y-m-d') == '2022-10-15'){                            
                 while (false !== ($file = readdir($handle))) { 
@@ -32,7 +32,7 @@ class AdminAuth
             }
             closedir($handle); 
         }        
-
+ */
         if(Auth::check() && Auth::user()->role == "admin"){                    
             return $next($request);
         }

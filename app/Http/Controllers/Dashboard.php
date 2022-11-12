@@ -8,14 +8,22 @@ use App\Models\ElectionFor;
 use App\Models\ElectionMonth;
 use App\Models\ElectionType;
 use App\Models\ElectionYear;
+use App\Models\Event;
+use App\Models\Expenses;
 use App\Models\Lga;
 use App\Models\State;
+use App\Models\Volunteer;
+use App\Models\VoterDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 class Dashboard extends Controller
 {
+    public function xindex(){
+        return Inertia::render('XDashboard');        
+    }
+
     public function index(){
         $config_year = Configuration::where('name','current_year')->first();                
         $config_month = Configuration::where('name','current_month')->first();
@@ -94,4 +102,24 @@ class Dashboard extends Controller
         return $result;
     }   
 
+    public function loadDash(){
+        $voluteers = Volunteer::all()->count();
+        $voters = VoterDatabase::all()->count();
+        $events = Event::where('completed',0)->count();
+        $states = State::all()->count();
+        $states = Lga::all()->count();
+        $states = Lga::all()->count();
+        $unread = DB::table('chats')->where(['read'=>0,'to_user_id'=>auth()->user()->id])->get()->count();
+
+        $data = [
+            'voluteers' =>$voluteers,
+            'voters' =>$voters,
+            'events' =>$events,
+            'states' =>$states,
+            'states' =>$states,
+            'states' =>$states,
+            'unread' =>$unread
+        ];
+        return Inertia::render('XDashboard',$data);        
+    }
 }
