@@ -8,6 +8,9 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import Swal from 'sweetalert2/dist/sweetalert2.js'
+import 'sweetalert2/dist/sweetalert2.css'
+import { Inertia } from '@inertiajs/inertia'
 
 const props = defineProps({
   canLogin: Boolean,
@@ -25,6 +28,21 @@ const data = reactive({
   states: [],  
   areas:[],
   indexNum:0
+});
+
+const form = reactive({
+    name:'',
+    email:'',
+    phone:'',
+    address:'',
+    state_id:'',
+    lga_id:'',
+    ward_id:'',
+    area_id:'',
+    id: "",
+    gender:"",
+    dob:"",
+    password:''
 });
 function trigerLgas() {
   // let state = document.getElementById('state_id').value;
@@ -53,19 +71,7 @@ function trigerWards() {
     });
   }, 400);
 }
-const form = useForm({
-    name:'',
-    email:'',
-    phone:'',
-    address:'',
-    state_id:'',
-    lga_id:'',
-    ward_id:'',
-    area_id:'',
-    id: "",
-    gender:"",
-    dob:""
-});
+
 function edit(item,i) {
     data.indexNum = i;
   form.id = item.id;
@@ -78,14 +84,16 @@ function edit(item,i) {
       form.ward_id = item.ward_id;
     }, 100);
   }, 100);
-  form.name  = item.name ;
+    form.name  = item.name ;
     form.email = item.email;
     form.phone = item.phone;
     form.address = item.address;
     form.area_id = item.area_id;  
     form.gender = item.gender;  
     form.dob = item.dob;    
-  data.switch = "add";
+    form.volunteer_id = item.volunteer_id;
+    form.password = '',    
+    data.switch = "add";
 }
 function add() {
     form.name =''
@@ -101,11 +109,21 @@ function add() {
     form.dob='';
   data.switch = "add";
 }
-const submit = () => {
-  form.post(route("add_volunteer"), {
-    onFinish: ($res) => {       
-    },
-  });
+const submit = async () => {
+    data.addingTeamMember = true;
+    let response =  await axios.post("add_volunteer",form)    
+    if(response.data.ok == true){
+        if(form.id == ''){            
+            Swal.fire(response.data.msg, 'success')
+            Inertia.reload({ only: ['teams'] })
+        }else{
+            showAlert(response.data.msg, 'success')
+            Inertia.reload({ only: ['teams'] })
+        }
+    }else{
+        showAlert('try again', 'error')
+    }
+    data.addingTeamMember = false  
 };
 </script>
 <template>
@@ -219,6 +237,10 @@ const submit = () => {
                     <div class="col-md-4 mb-2">  
                         <label>Date of Birth</label>                      
                         <input v-model="form.dob" type="date" class="form-control">                            
+                    </div> 
+                    <div class="col-md-4 mb-2">  
+                        <label>Password</label>                      
+                        <input v-model="form.password" type="date" class="form-control">                            
                     </div>                                 
                     <input v-model="form.id" type="text" class="form-control d-none">                                                        
                     <div class="col-md-4 mb-2">

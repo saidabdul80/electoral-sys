@@ -175,8 +175,8 @@ TypingInterval()
                 <div  v-if="user.id !== currentUser.id"  class="d-flex w-100 align-items-center user-x " style="user-select:none;" >                                                                        
                     <img :src="'/photos/'+user?.image" width="50" style="border-radius:50px;" class="img1" />
                     <div class="py-3 pl-1 w-100" style=" border-bottom:1px solid #ccc;height: 100%;user-select: none;">
-                        <span class="name">{{user.name}}</span> 
-                         (<span class="name">{{user.volunteer_id}}</span>)
+                        <span class="name">{{user.first_name}} {{user.surname}}</span> 
+                         (<span class="name">{{user.email.slice(1,14)}}</span>)
                     </div>                    
                 </div>  
             </div>
@@ -195,13 +195,13 @@ TypingInterval()
                             <div style="clear:both; margin-top: 4px;" v-for="chat in data.conversations" :key="chat.id+'_ch'">                            
                                 <div :class="checkUser(chat.from_user_id)" class="pt-2">                            
                                     <div :class="checkUserForColor(chat.from_user_id)" class="d-inline-block align-items-center pt shdowx">                                       
-                                        <div class="px-3 pt-2 pb-2 d-inline-block" > 
-                                            <p v-if="chat.message_type=='text'" style="font-size:0.97em">{{chat.message}}</p>
-                                            <div v-show="chat.message_type=='image'">                                                
+                                        <div class="pstyle pb-2 d-inline-block" > 
+                                            <p v-if="chat.message_type=='text'" style="font-size:0.97em" class="mb-0">{{chat.message}}</p>
+                                            <div v-show="chat.message_type=='image'" class="mb-0">                                                
                                                 <img :src="'/uploads/'+chat.message" style="width:35%" />
                                                 <p>{{chat.message}}</p>
                                             </div>
-                                            <p v-if="chat.message_type=='file'"> 
+                                            <p v-if="chat.message_type=='file'" class="mb-0"> 
                                                 <a  :href="chat.message" target="_blank">{{chat.message}}</a>
                                             </p>
                                             <span  :class="checkUser2(chat)" style="font-size:1em"  class="bi-check2-all"></span>
@@ -284,11 +284,49 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
     box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
 }
 .round2{
-border-radius: 0px 20px 10px 10px;
+border-radius: 0px 15px 8px 8px;
+position:relative
 }
 .round1{
-border-radius: 20px 0px 10px 10px;
+border-radius: 15px 0px 8px 8px; 
+position:relative
 }
+.round1:after{
+    content: "";
+    position: absolute;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid #fdfde9;
+    border-width: 10px;
+    height: 27px;
+    right: -20px;
+    Transform: rotatez(90deg);
+    /* background: #fdfde9; */
+    /* display: block; */
+    /* box-shadow: rgb(0 0 0 / 12%) 0px -5px 10px, rgb(0 0 0 / 24%) 0px 1px 2px; */
+    top: 0px;
+    z-index: 0;
+}
+
+.round2:after{
+    content: "";
+    position: absolute;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-top: 5px solid #fff;
+    border-width: 10px;
+    height: 27px;
+    left: -20px;
+    Transform: rotatez(90deg);
+    /* background: #fdfde9; */
+    /* display: block; */
+    /* box-shadow: rgb(0 0 0 / 12%) 0px -5px 10px, rgb(0 0 0 / 24%) 0px 1px 2px; */
+    top: 0px;
+    z-index: 0;
+}
+
 #upload-photo {
     height: 0;
     width: 0;
@@ -302,5 +340,9 @@ border-radius: 20px 0px 10px 10px;
 }
 #upload-photo-label:active{
     background:#ccc;
+}
+.pstyle{
+    padding: 6px 7px 8px 9px;
+    font-family: Segoe UI,Helvetica Neue,Helvetica,Lucida Grande,Arial,Ubuntu,Cantarell,Fira Sans,sans-serif;
 }
 </style>

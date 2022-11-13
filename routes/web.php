@@ -98,7 +98,7 @@ Route::get('/settings',[SettingController::class,'index'])->middleware(['auth', 
 Route::get('/profile',[ProfileController::class,'index'])->middleware(['auth', 'verified', 'adminAuth'])->name('profile');
 
 
-Route::get('/xdashboard',[Dashboard::class,'loadDash'])->middleware(['auth', 'verified', 'adminAuth'])->name('dashboard');
+Route::get('/xdashboard',[Dashboard::class,'loadDash'])->middleware(['auth', 'verified', 'adminAuth'])->name('xdashboard');
 //Route::get('/user',[UserController::class,'index'])->middleware(['auth', 'verified', 'adminAuth'])->name('user');
 Route::post('/get_data',[Dashboard::class,'getData'])->middleware(['auth', 'verified', 'adminAuth'])->name('get_data');
 Route::post('registerx', [UserController::class, 'store'])->middleware(['auth', 'verified', 'adminAuth'])->name('registerx');

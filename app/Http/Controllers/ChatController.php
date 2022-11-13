@@ -6,6 +6,7 @@ use App\Events\ChatMessage;
 use App\Events\ChatTyping;
 use App\Events\MessageSent;
 use App\Models\Chat;
+use App\Models\User;
 use App\Models\Volunteer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +27,7 @@ class ChatController extends Controller
      */
     public function index()
     {
-        $users = Volunteer::paginate(100);     
+        $users = User::paginate(100);     
         $currentUser = auth()->user();       
         //return view('chat',['users'=> $users]); */
         return Inertia::render('Chat',['users'=>$users, 'currentUser'=>$currentUser]);
@@ -51,6 +52,7 @@ class ChatController extends Controller
             $message = time().'.'.$request->message->extension();  
             $request->message->move(public_path('uploads'), $message);       
         }
+
         $token = $request->from_user_id.$request->to_user_id;
         $message = [            
             "from_user_id" => $from_user_id,
@@ -63,15 +65,15 @@ class ChatController extends Controller
 
 
         $newMessage = Chat::create($message);        
-        $user = Volunteer::find($from_user_id);
-        $messageTo = Volunteer::find($to_user_id);
+        $user = User::find($from_user_id);
+        $messageTo = User::find($to_user_id);
 
         broadcast(new MessageSent($user, $newMessage, $messageTo))->toOthers();
         return $newMessage;
     }
 
     public function typing(Request $request){
-        $user = Volunteer::find($request->get('from_user_id'));        
+        $user = User::find($request->get('from_user_id'));        
         $toID = $request->get('to_user_id');
         broadcast(new ChatTyping($user, toID:$toID))->toOthers();
         return "true";

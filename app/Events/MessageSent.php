@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Chat;
+use App\Models\User;
 use App\Models\Volunteer;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -35,7 +36,7 @@ class MessageSent implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(Volunteer $user, Chat $message,  Volunteer $messageTo)
+    public function __construct(User $user, Chat $message,  User $messageTo)
     {
         $this->user = $user;
         $this->message = $message;

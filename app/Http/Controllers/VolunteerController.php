@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AreaList;
 use App\Models\State;
+use App\Models\User;
 use App\Models\Volunteer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -52,41 +53,45 @@ class VolunteerController extends Controller
     {        
         if($request->get('id') != ''){
             $volunteers = $request->toArray();
+            if($volunteers['password'] !==''){
+                $volunteers['password'] = Hash::make($volunteers['password']);
+                User::where('email',$volunteers['volunteer_id'])->update([
+                    'first_name'=>$volunteers['name'],                                
+                    'password'=>$volunteers['password'],                
+                ]);        
+            }            
             $id = $volunteers['id'];
             $email = $volunteers['email'];
             if(Volunteer::where('email',$email)->where('id','!=',$id)->exists()){
-              return  "<div style=display:flex;flex-direction:column; justify-content:center;align-item:center;height:100%'>
-              <h1 style='background:6c21;color:#6c2; border:1px solid #2c6; border-radius:7px; text-align:center;padding:25px;'>
-                  Email Already Exist
-              </h1>
-              <a href='/volunteer_management' style='margin-top:30px; padding:10px 23px; background:#2c6; color white;border-radius:5px;'>Ok</a>
-              </div>";
+                return "Email Already Exist";
             }
             unset($volunteers['id']);
-
             Volunteer::where('id',$id)->update($volunteers);            
             //return Inertia::render('volunteers',$this->data());
+            return ["ok"=>true, "msg"=>"Volunteer Updated Successfuly"];
         }else{
             $volunteers = $request->toArray();      
             $newID = 'ECMS-'.date('d').rand(100,900).date('i');      
             $volunteers['volunteer_id'] = $newID;
             $volunteers['password'] = Hash::make($newID);
             unset($volunteers['id']);
-
             $email = $volunteers['email'];
             if(Volunteer::where('email',$email)->exists()){
-              return "<div style=display:flex;flex-direction:column; justify-content:center;align-item:center;height:100%'>
-              <h1 style='background:6c21;color:#6c2; border:1px solid #2c6; border-radius:7px; text-align:center;padding:25px;'>
-                  Email Already Exist
-              </h1>
-              <a href='/volunteer_management' style='margin-top:30px; padding:10px 23px; background:#2c6; color white;border-radius:5px;'>Ok</a>
-              </div>";
+              return "Email Already Exist";        
             }
 
             Volunteer::insert($volunteers);
+            User::insert([
+                'first_name'=>$volunteers['name'],
+                'email'=>$newID,
+                'lga'=>$volunteers[null],
+                'state'=>null,
+                'password'=>Hash::new($newID),
+                'role'=>'user'
+            ]);
             //return Inertia::render('volunteers',$this->data());
+            return ["ok"=>true, "msg"=>"Volunteer Created with the ID: $newID"];
         }
-        return $this->success;
     }
 
     public function all()
