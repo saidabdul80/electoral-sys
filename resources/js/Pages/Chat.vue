@@ -301,7 +301,7 @@ position:relative
     border-width: 10px;
     height: 27px;
     right: -20px;
-    Transform: rotatez(90deg);
+    transform: rotateZ(90deg);
     /* background: #fdfde9; */
     /* display: block; */
     /* box-shadow: rgb(0 0 0 / 12%) 0px -5px 10px, rgb(0 0 0 / 24%) 0px 1px 2px; */
@@ -319,7 +319,7 @@ position:relative
     border-width: 10px;
     height: 27px;
     left: -20px;
-    Transform: rotatez(90deg);
+    transform: rotateZ(90deg);
     /* background: #fdfde9; */
     /* display: block; */
     /* box-shadow: rgb(0 0 0 / 12%) 0px -5px 10px, rgb(0 0 0 / 24%) 0px 1px 2px; */
