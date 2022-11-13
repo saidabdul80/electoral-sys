@@ -27,7 +27,7 @@ class UserController extends Controller
             'msg' =>$msg
         ];
         $users = User::paginate(200);       
-        return Inertia::render('Users', ['users'=>$users, 'config'=>$config]);
+        return Inertia::render('Team', ['users'=>$users, 'config'=>$config]);
     }
 
     public function store(Request $request)
