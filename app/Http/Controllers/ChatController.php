@@ -27,7 +27,7 @@ class ChatController extends Controller
      */
     public function index()
     {
-        $users = User::paginate(100);     
+        $users = Volunteer::paginate(100);     
         $currentUser = auth()->user();       
         //return view('chat',['users'=> $users]); */
         return Inertia::render('Chat',['users'=>$users, 'currentUser'=>$currentUser]);
