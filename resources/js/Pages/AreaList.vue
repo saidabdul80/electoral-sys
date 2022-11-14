@@ -7,7 +7,10 @@ import PAGINATE from "./../Components/Paginate.vue";
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+
+import Swal from 'sweetalert2/dist/sweetalert2.js'
+import 'sweetalert2/dist/sweetalert2.css'
+
 const props = defineProps({
   canLogin: Boolean,
   canRegister: Boolean,
@@ -31,36 +34,22 @@ const data = reactive({
         state_id:null
     }    
 })
-function trigerLgas(){
-    data.lga_ready =false
-    
-    // let state = document.getElementById('state_id').value;   
-    data.lga_id = null 
-    data.ward_id = null
-    setTimeout(function(){
-        props.states.every((item) =>{
-            if(item.id == form.state_id ){        
-                data.lgas = item.lgas                              
-                return false
-            }
-            return true
-        })    
-    },400)
+async function trigerLgas() {
+  
+  let response =  await axios.get(`/lgas/${form.state_id}`)
+  data.lgas = response.data
 }
-function trigerWards(){    
-    data.ward_id = null 
-    // let state = document.getElementById('state_id').value;    
-    setTimeout(function(){
-        data.lgas.every((item) =>{
-            if(item.id == form.lga_id ){            
-                data.wards = item.wards                                       
-                return false
-            }
-            return true
-        })    
-    },400)
+async function trigerWards() {
+  let response =  await axios.get(`/wards/${form.lga_id}`)
+  data.wards = response.data
 }
-const form = useForm({
+
+async function trigerAreas() {
+  let response =  await axios.get(`/areas/${form.ward_id}`)
+  data.areas = response.data    
+}
+
+const form = reactive({
     state_id:0,
     lga_id:0,
     ward_id:0,
@@ -68,6 +57,7 @@ const form = useForm({
     description:"",
     id:""
 });
+
 function edit(item){
     form.id = item.id;
     form.state_id = item.state_id;
@@ -92,11 +82,22 @@ function add(){
     form.id="" ;
     data.switch = 'add'
 }
-const submit = () => {    
-    form.post(route('add_area'), {
-        onFinish: ($res) => {                        
-        },
-    });
+
+const submit = async () => {
+    data.addingTeamMember = true;
+    let response =  await axios.post("add_area",form)    
+    if(response.data.ok == true){
+        if(form.id == ''){            
+            Swal.fire(response.data.msg, 'success')
+            Inertia.reload()
+        }else{
+            showAlert(response.data.msg, 'success')
+            Inertia.reload()
+        }
+    }else{
+        showAlert('try again', 'error')
+    }
+    data.addingTeamMember = false  
 };
 </script>
 <template>
@@ -107,8 +108,8 @@ const submit = () => {
       <i class="bi bi-stack"></i>
       <h4 class="ml-3 my-0">Area List</h4>
     </div>
-    <button @click="add()" class="ml-3 mb-3 btn btn-sm bg-dark text-white">Add</button>
-    <button @click="data.switch='list'" class="ml-3 mb-3 btn btn-sm bg-dark text-white">List</button>
+    <button :disabled="data.switch=='add'" @click="add()" class="ml-3 mb-3 btn btn-sm bg-dark text-white">Add</button>
+    <button :disabled="data.switch=='list'" @click="data.switch='list'" class="ml-3 mb-3 btn btn-sm bg-dark text-white">List</button>
     <div v-show="data.switch=='list'" class="px-3" >
         <table class="table table-bordered">
             <thead>

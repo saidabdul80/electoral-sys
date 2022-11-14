@@ -179,9 +179,7 @@ function showAlert(msg,icon='success'){
 }
 function changePage(page){
     clearFields()
-    if(data.switch == "list"){
-        data.switch = "list"
-    }
+    data.switch = "list"
     data.page=page
 }
 </script>
@@ -196,16 +194,24 @@ function changePage(page){
       <i class="bi bi-stack"></i>
       <h4 class="ml-3 my-0">Volunteers</h4>
     </div>
-    <div class="float-right">
-        <div style="border:1px solid #ccc; border-radius:5px;padding:5px; ">
-            <button @click="changePage('volunteers')" :disabled="data.page=='volunteers'" class=" btn btn-sm bg-dark text-white">Volunteers</button>
-            <button @click="changePage('party members')" :disabled="data.page=='party members'" class="ml-3 btn btn-sm bg-dark text-white">Party Members</button>
+    
+    <div class="row w-100">
+        <div class="col-md-7">
+            <div class="row w-100">
+                <button @click="data.switch='uploads'" :disabled="data.switch=='uploads'" class="w-1x  mb-3 btn btn-sm bg-dark text-white">Upload</button>
+                <button @click="add()" :disabled="data.switch=='add'" class="w-1x ml-3 mb-3 btn btn-sm bg-dark text-white">Add </button>
+                <div class="col-sm-12 col-md-4">
+                    <button @click="data.switch='list'" :disabled="data.switch=='list'" class="w-1x ml-3 mb-3 btn btn-sm bg-dark text-white mx-auto">List of {{data.page}}</button>
+                </div>
+            </div>
         </div>
+        <div class="col-md-5 mt-1">
+            <div>
+                <button @click="changePage('volunteers')" :disabled="data.page=='volunteers'" class="w-1x m-0 btn btn-sm bg-success text-white">Volunteers</button>
+                <button @click="changePage('party members')" :disabled="data.page=='party members'" class="w-1x ml-3 mt-0 btn btn-sm bg-success text-white">Party Members</button>
+            </div>
+        </div>        
     </div>
-    <button @click="data.switch='uploads'" :disabled="data.page=='uploads'" class="ml-3 mb-3 btn btn-sm bg-primary text-white">Upload</button>
-    <a  class="ml-3 mb-3 btn btn-sm bg-primary text-white" href="template/volunteers_upload_template.csv" target="_blank">Download Template</a>
-    <button @click="add()" :disabled="data.switch=='add'" class="ml-3 mb-3 btn btn-sm bg-dark text-white">Add</button>
-    <button @click="data.switch='list'" :disabled="data.switch=='list'" class="ml-3 mb-3 btn btn-sm bg-dark text-white">List</button>
     <div v-if="data.page=='volunteers'">
         <div v-show="data.switch=='list'" class="px-3" >
             <table class="table table-bordered">
@@ -304,6 +310,7 @@ function changePage(page){
     </div>
     
     <div v-show="data.switch=='uploads'" class="px-3" >
+        <a  class="ml-3 mb-3 btn btn-sm bg-primary text-white w-1x" href="template/volunteers_upload_template.csv" target="_blank">Download Template</a>
         <form @submit.prevent="uploadData()" class="mt-5 ml-5" enctype="multipart/form-data">                        
             <div class="col-md-4 mb-4">
                 <label>Select User type</label>                      
@@ -435,3 +442,10 @@ function changePage(page){
     </div>
   </div>
 </template>
+<style scoped>
+
+.w-1x{
+    width:160px;    
+    text-transform: capitalize;
+}
+</style>

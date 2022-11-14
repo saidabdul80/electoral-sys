@@ -1,9 +1,5 @@
 <script setup>
 import GuestLayout from "@/Layouts/GuestLayout.vue";
-import InputError from "@/Components/InputError.vue";
-import InputLabel from "@/Components/InputLabel.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
-import TextInput from "@/Components/TextInput.vue";
 import Panel from "./Panel.vue";
 import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
 import { reactive } from "@vue/reactivity";
@@ -14,7 +10,7 @@ import PAGINATE from "./../Components/Paginate.vue";
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import 'sweetalert2/dist/sweetalert2.css'
 import { Inertia } from '@inertiajs/inertia'
-import './../boostrap5.js'
+//import './../boostrap5.js'
 import LightLoader from './../Components/LightLoader.vue';
 import Echo from 'laravel-echo'
 import Pusher from 'pusher-js'

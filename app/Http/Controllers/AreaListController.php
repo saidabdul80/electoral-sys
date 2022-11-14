@@ -23,13 +23,9 @@ class AreaListController extends Controller
     }
 
     private function data(){
-        $states = State::with(['lgas'=>function($query){
-            $query->with('wards');
-        }])->get();
-        $lgas = '';
-        $wards = '';
+        $states = State::all();        
         $areaList = AreaList::orderBy('id', 'DESC')->paginate(10);                
-        return ['arealists'=>$areaList, 'wards'=>$wards, 'lgas'=>$lgas, 'states'=>$states];
+        return ['arealists'=>$areaList, 'states'=>$states];
     }
 
     /**
