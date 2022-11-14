@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-class Volunteer extends Model
+class Volunteer extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     protected  $table = 'volunteers';
@@ -37,10 +37,23 @@ class Volunteer extends Model
         return $this->phone;
     } 
 
+    public function getDepartmentAttribute() {       
+        if(isset($this->department_id)){
+            return Department::find($this->department_id)?->name;
+        }
+    } 
+
+    public function getStatusAttribute() { 
+        if(isset($this->status_id)){
+            return Status::find($this->status_id)?->name;
+        }      
+    } 
+
+
     public function team()
     {
         return $this->belongsToMany(Team::class, 'team_members');        
     }
     
-    protected $appends = ['state','lga','ward', 'area','msisdn'];
+    protected $appends = ['state','lga','ward', 'area','msisdn', 'status', 'department'];
 }

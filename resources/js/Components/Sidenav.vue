@@ -22,7 +22,7 @@ const props = defineProps(['active']);
           </Link>
           <Link v-if="$page.props.auth.user.role=='admin'" href="volunteer_management" data-toggle="tooltip" data-placement="top" title="Volunteers" :class="['nav_link',( active =='Volunteer'?'active':'')]">
             <i class="nav_ico ico-org bi-person-bounding-box h5 pl-2"></i>
-            <span class="nav_name hidename">Volunteer Management</span>
+            <span class="nav_name hidename">Users Management</span>
           </Link>
           <Link v-if="$page.props.auth.user.role=='admin'" href="voter_database" data-toggle="tooltip" data-placement="top" title="Voters" :class="['nav_link',( active =='Voter'?'active':'')]">
             <i class="nav_ico ico-org bi-people-fill h5 pl-2"></i>

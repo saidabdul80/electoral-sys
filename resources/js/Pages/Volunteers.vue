@@ -16,10 +16,12 @@ const props = defineProps({
   canLogin: Boolean,
   canRegister: Boolean,
   laravelVersion: String,
-  phpVersion: String,
-  areas: Array,
+  phpVersion: String,  
   volunteers: Array,  
-  states:Array
+  states:Array,
+  departments:Array,
+  statuses:Array,
+  partyMembers:Array
 });
 const data = reactive({
   switch: "list",
@@ -27,9 +29,17 @@ const data = reactive({
   lgas: [],
   states: [],  
   areas:[],
-  indexNum:0
+  page:'volunteers',
+  indexNum:0,
+  loading:false
 });
 
+const formUpload = reactive({
+    file_to_upload:'',
+    department_id:'',
+    status_id:'',
+    user_type:''
+})
 const form = reactive({
     name:'',
     email:'',
@@ -42,35 +52,48 @@ const form = reactive({
     id: "",
     gender:"",
     dob:"",
-    password:''
+    password:'',
+    volunteer_id:'',
+    status_id:'',
+    user_type:'Volunteer',
+    department_id:''
 });
-function trigerLgas() {
-  // let state = document.getElementById('state_id').value;
-  data.lga_id = null;
-  data.ward_id = null;
-  setTimeout(function () {
-    props.states.every((item) => {
-      if (item.id == form.state_id) {
-        data.lgas = item.lgas;
-        return false;
-      }
-      return true;
-    });
-  }, 400);
+
+async function uploadData(){
+    data.loading = true    
+    let response = await axios.post('upload_volunteer_data',formUpload, {
+            headers: {
+            'Content-Type': 'multipart/form-data'
+            }
+        });       
+        data.loading = false
+    if(response.data.ok == true){
+        Swal.fire(response.data.msg, 'success')
+        Inertia.reload()
+    }else{
+        Swal.fire({
+            icon: 'error',   
+            html: response.data.msg,
+            footer: 'Correct the issues from your file and Upload Again'
+        })        
+    }
 }
-function trigerWards() {
-  data.ward_id = null;
-  // let state = document.getElementById('state_id').value;
-  setTimeout(function () {
-    data.lgas.every((item) => {
-      if (item.id == form.lga_id) {
-        data.wards = item.wards;
-        return false;
-      }
-      return true;
-    });
-  }, 400);
+
+async function trigerLgas() {
+  
+  let response =  await axios.get(`/lgas/${form.state_id}`)
+  data.lgas = response.data
 }
+async function trigerWards() {
+  let response =  await axios.get(`/wards/${form.lga_id}`)
+  data.wards = response.data
+}
+
+async function trigerAreas() {
+  let response =  await axios.get(`/areas/${form.ward_id}`)
+  data.areas = response.data    
+}
+
 
 function edit(item,i) {
     data.indexNum = i;
@@ -91,11 +114,18 @@ function edit(item,i) {
     form.area_id = item.area_id;  
     form.gender = item.gender;  
     form.dob = item.dob;    
-    form.volunteer_id = item.volunteer_id;
+    form.volunteer_id = item.volunteer_id;    
+    form.department_id=item.department_id;
+    form.status_id=item.status_id;
+    form.user_type = item.user_type;
     form.password = '',    
     data.switch = "add";
 }
 function add() {
+    clearFields()
+    data.switch = "add"; 
+}
+function clearFields(){
     form.name =''
     form.email =''
     form.phone =''
@@ -107,7 +137,10 @@ function add() {
     form.id = '';
     form.gender='';
     form.dob='';
-  data.switch = "add";
+    form.volunteer_id='';
+    form.department_id='';
+    form.status_id="";
+    form.user_type = "";
 }
 const submit = async () => {
     data.addingTeamMember = true;
@@ -125,60 +158,182 @@ const submit = async () => {
     }
     data.addingTeamMember = false  
 };
+
+function showAlert(msg,icon='success'){
+    const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.addexpenseListener('mouseenter', Swal.stopTimer)
+        toast.addexpenseListener('mouseleave', Swal.resumeTimer)
+    }
+    })
+
+    Toast.fire({
+    icon: icon,
+    title: msg
+    })
+}
+function changePage(page){
+    clearFields()
+    if(data.switch == "list"){
+        data.switch = "list"
+    }
+    data.page=page
+}
 </script>
 <template>
   <HEADER></HEADER>
   <SIDENAV active="Volunteer"></SIDENAV>
   <div class="height-100 bg-light" id="body-pd">
+    <div style="position:fixed; display: flex; justify-content: center;padding:5px; width:100%;background:#2223;color:white;align-items: center;" v-if="data.loading">
+       Please Wait <div class="spinner-border text-white" role="status"></div>
+    </div>
     <div class="p-3 d-flex align-items-center">
       <i class="bi bi-stack"></i>
       <h4 class="ml-3 my-0">Volunteers</h4>
     </div>
-    <button @click="add()" class="ml-3 mb-3 btn btn-sm bg-dark text-white">Add</button>
-    <button @click="data.switch='list'" class="ml-3 mb-3 btn btn-sm bg-dark text-white">List</button>
-    <div v-show="data.switch=='list'" class="px-3" >
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <td>S/N</td>
-                    <td>Volunteer ID</td>                    
-                    <td>Name</td>
-                    <td>Email</td>
-                    <td>Phone</td>
-                    <td>Address</td>
-                    <td>State</td>
-                    <td>LGA</td>
-                    <td>Ward</td>
-                    <td>Area</td>
-                    <td>Date of Birth</td>
-                    <td>Gender</td>
-                    <td>Pix</td>
-                    <td></td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(volunteer,i) in volunteers.data" :key="i">
-                    <td>{{ volunteers.from + i }}</td>
-                    <td>{{volunteer.volunteer_id}}</td>                    
-                    <td>{{volunteer.name}}</td>                    
-                    <td>{{volunteer.email}}</td>                    
-                    <td>{{volunteer.phone}}</td>                    
-                    <td>{{volunteer.address}}</td>                    
-                    <td>{{volunteer.state}}</td>
-                    <td>{{volunteer.lga}}</td>
-                    <td>{{volunteer.ward}}</td>
-                    <td>{{volunteer.area}}</td>
-                    <td>{{volunteer.dob}}</td>
-                    <td>{{volunteer.gender}}</td>
-                    <td><img :src="volunteer.image" alt="image"></td>
+    <div class="float-right">
+        <div style="border:1px solid #ccc; border-radius:5px;padding:5px; ">
+            <button @click="changePage('volunteers')" :disabled="data.page=='volunteers'" class=" btn btn-sm bg-dark text-white">Volunteers</button>
+            <button @click="changePage('party members')" :disabled="data.page=='party members'" class="ml-3 btn btn-sm bg-dark text-white">Party Members</button>
+        </div>
+    </div>
+    <button @click="data.switch='uploads'" :disabled="data.page=='uploads'" class="ml-3 mb-3 btn btn-sm bg-primary text-white">Upload</button>
+    <a  class="ml-3 mb-3 btn btn-sm bg-primary text-white" href="template/volunteers_upload_template.csv" target="_blank">Download Template</a>
+    <button @click="add()" :disabled="data.switch=='add'" class="ml-3 mb-3 btn btn-sm bg-dark text-white">Add</button>
+    <button @click="data.switch='list'" :disabled="data.switch=='list'" class="ml-3 mb-3 btn btn-sm bg-dark text-white">List</button>
+    <div v-if="data.page=='volunteers'">
+        <div v-show="data.switch=='list'" class="px-3" >
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td>S/N</td>
+                        <td>Volunteer ID</td>                    
+                        <td>Name</td>
+                        <td>Email</td>
+                        <td>Phone</td>
+                        <td>Address</td>
+                        <td>State</td>
+                        <td>LGA</td>
+                        <td>Ward</td>
+                        <td>Area</td>
+                        <td>Date of Birth</td>
+                        <td>Gender</td>
+                        <td>Pix</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(volunteer,i) in volunteers.data" :key="i">
+                        <td>{{ volunteers.from + i }}</td>
+                        <td>{{volunteer.volunteer_id}}</td>                    
+                        <td>{{volunteer.name}}</td>                    
+                        <td>{{volunteer.email}}</td>                    
+                        <td>{{volunteer.phone}}</td>                    
+                        <td>{{volunteer.address}}</td>                    
+                        <td>{{volunteer.state}}</td>
+                        <td>{{volunteer.lga}}</td>
+                        <td>{{volunteer.ward}}</td>
+                        <td>{{volunteer.area}}</td>
+                        <td>{{volunteer.dob}}</td>
+                        <td>{{volunteer.gender}}</td>
+                        <td><img :src="volunteer.image" alt="image"></td>
+                        <td>
+                            <button @click="edit(volunteer,i)" class="btn btn-sm bg-primary text-white">Edit</button>
+                            <button class="btn btn-sm ml-2 bg-danger text-white">Delete</button>                        
+                        </td>                    
+                    </tr>
+                </tbody>
+            </table>
+            <PAGINATE :next="volunteers.next_page_url" :prev="volunteers.prev_page_url"></PAGINATE>
+        </div>
+    </div>
+    <div v-if="data.page=='party members'">
+        <div v-show="data.switch=='list'" class="px-3" >
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td>S/N</td>
+                        <td>Volunteer ID</td>                    
+                        <td>Department</td>
+                        <td>Status</td>
+                        <td>Name</td>
+                        <td>Email</td>
+                        <td>Phone</td>
+                        <td>Address</td>
+                        <td>State</td>
+                        <td>LGA</td>
+                        <td>Ward</td>
+                        <td>Area</td>
+                        <td>Date of Birth</td>
+                        <td>Gender</td>
+                        <td>Pix</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(partyMember,i) in partyMembers.data" :key="i">
+                    <td>{{ partyMembers.from + i }}</td>
+                    <td>{{partyMember.partyMember_id}}</td>                    
+                    <td>{{partyMember.department}}</td>                    
+                    <td>{{partyMember.status}}</td>                    
+                    <td>{{partyMember.name}}</td>                    
+                    <td>{{partyMember.email}}</td>                    
+                    <td>{{partyMember.phone}}</td>                    
+                    <td>{{partyMember.address}}</td>                    
+                    <td>{{partyMember.state}}</td>
+                    <td>{{partyMember.lga}}</td>
+                    <td>{{partyMember.ward}}</td>
+                    <td>{{partyMember.area}}</td>
+                    <td>{{partyMember.dob}}</td>
+                    <td>{{partyMember.gender}}</td>
+                    <td><img :src="partyMember.image" alt="image"></td>
                     <td>
-                        <button @click="edit(volunteer,i)" class="btn btn-sm bg-primary text-white">Edit</button>
+                        <button @click="edit(partyMember,i)" class="btn btn-sm bg-primary text-white">Edit</button>
                         <button class="btn btn-sm ml-2 bg-danger text-white">Delete</button>                        
                     </td>                    
                 </tr>
-            </tbody>
-        </table>
-        <PAGINATE :next="volunteers.next_page_url" :prev="volunteers.prev_page_url"></PAGINATE>
+                </tbody>
+            </table>
+            <PAGINATE :next="partyMembers.next_page_url" :prev="partyMembers.prev_page_url"></PAGINATE>
+        </div>
+    </div>
+    
+    <div v-show="data.switch=='uploads'" class="px-3" >
+        <form @submit.prevent="uploadData()" class="mt-5 ml-5" enctype="multipart/form-data">                        
+            <div class="col-md-4 mb-4">
+                <label>Select User type</label>                      
+                <select required v-model="formUpload.user_type" type="text" class="form-control">                            
+                    <option value="Volunteer">Volunteer</option>
+                    <option value="Party Member">Party Member</option>
+                </select>   
+            </div>  
+            <div v-if="formUpload.user_type == 'Party Member'" class="col-md-4 mb-2">
+                <label>Select Status</label>                      
+                <select required v-model="formUpload.status_id" type="text" class="form-control">                            
+                    <option v-for="(status) in statuses" :key="'dep_'+status.id" :value="status.id">{{status.name}}</option>
+                </select>   
+            </div>         
+            <div v-if="formUpload.user_type=='Party Member'" class="col-md-4 mb-4">
+                <label>Select Department</label>                      
+                <select required v-model="formUpload.department_id" type="text" class="form-control">                            
+                    <option v-for="(department) in departments" :key="'dep_'+department.id" :value="department.id">{{department.name}}</option>
+                </select>   
+            </div>  
+            <div class="mt-4">
+                <InputLabel for="file_to_upload" value="CSV File To uplad" />                                
+                <input required id="file_to_upload" @input="formUpload.file_to_upload = $event.target.files[0]"  type="file" class=" mt-1 block" />               
+            </div>                            
+            <div class=" mt-4">
+                <button class="ml-4 btn btn-dark" :class="{ 'opacity-25': form.processing }" >
+                    Upload Data
+                </button>
+            </div>                    
+        </form>  
     </div>
     <div v-show="data.switch=='add'" class="px-3" >
         <form @submit.prevent="submit">
@@ -188,6 +343,10 @@ const submit = async () => {
                     <div class="col-md-4 mb-2">  
                         <label>Name</label>                      
                         <input required v-model="form.name" type="text" class="form-control">                            
+                    </div>
+                    <div class="col-md-4 mb-2">  
+                        <label>Volunteer ID</label>                      
+                        <input required v-model="form.volunteer_id" type="text" class="form-control">                            
                     </div>
                     <div class="col-md-4 mb-2">  
                         <label>Email</label>                      
@@ -217,16 +376,35 @@ const submit = async () => {
                     </div>
                     <div class="col-md-4 mb-2">
                         <label>Ward</label>                      
-                        <select required v-model="form.ward_id" type="text" class="form-control">                            
+                        <select @change="trigerAreas()" required v-model="form.ward_id" type="text" class="form-control">                            
                             <option v-for="(ward) in data.wards" :key="'ward_'+ward.id" :value="ward.id">{{ward.name}}</option>
                         </select>   
                     </div>          
                     <div class="col-md-4 mb-2">
                         <label>Area Name</label>                      
                         <select v-model="form.area_id" type="text" class="form-control">                            
-                            <option v-for="(area) in areas" :key="'a_'+area.id" :value="area.id">{{area.name}}</option>
+                            <option v-for="(area) in data.areas" :key="'a_'+area.id" :value="area.id">{{area.name}}</option>
                         </select>   
-                    </div>       
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label>User type</label>                      
+                        <select required v-model="form.user_type" type="text" class="form-control">                            
+                            <option value="Volunteer">Volunteer</option>
+                            <option value="Party Member">Party Member</option>
+                        </select>   
+                    </div>          
+                    <div v-if="form.user_type == 'Party Member'" class="col-md-4 mb-2">
+                        <label>Department</label>                      
+                        <select required v-model="form.department_id" type="text" class="form-control">                            
+                            <option v-for="(department) in departments" :key="'dep_'+department.id" :value="department.id">{{department.name}}</option>
+                        </select>   
+                    </div>  
+                    <div v-if="form.user_type == 'Party Member'" class="col-md-4 mb-2">
+                        <label>Status</label>                      
+                        <select required v-model="form.status_id" type="text" class="form-control">                            
+                            <option v-for="(status) in statuses" :key="'dep_'+status.id" :value="status.id">{{status.name}}</option>
+                        </select>   
+                    </div>  
                     <div class="col-md-4 mb-2">
                         <label>Gender</label>                      
                         <select v-model="form.gender" type="text" class="form-control">                            

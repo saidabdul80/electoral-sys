@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\AreaList;
+use App\Models\Department;
 use App\Models\State;
+use App\Models\Status;
 use App\Models\User;
 use App\Models\Volunteer;
 use Illuminate\Http\Request;
@@ -31,18 +33,19 @@ class VolunteerController extends Controller
     }
     public function index()
     {
-        $volunteers = Volunteer::paginate(10);        
+        $volunteers = Volunteer::where('user_type','Volunteer')->paginate(10);        
+        $partyMembers = Volunteer::where('user_type','Party Member')->paginate(10);        
         $data = $this->data();
         $data['volunteers']=$volunteers;
+        $data['partyMembers']=$partyMembers;
         return Inertia::render('Volunteers',$data);
     }
 
     private function data(){
-        $states = State::with(['lgas'=>function($query){
-            $query->with('wards');
-        }])->get();        
-        $areaList = AreaList::all();                
-        return ['areas'=>$areaList, 'states'=>$states];
+        $states = State::all();                
+        $departments = Department::all();
+        $status = Status::all(); 
+        return ['states'=>$states,'departments'=>$departments, 'statuses'=>$status];
     }
     /**
      * Show the form for creating a new resource.
@@ -54,11 +57,7 @@ class VolunteerController extends Controller
         if($request->get('id') != ''){
             $volunteers = $request->toArray();
             if($volunteers['password'] !==''){
-                $volunteers['password'] = Hash::make($volunteers['password']);
-                User::where('email',$volunteers['volunteer_id'])->update([
-                    'first_name'=>$volunteers['name'],                                
-                    'password'=>$volunteers['password'],                
-                ]);        
+                $volunteers['password'] = Hash::make($volunteers['password']);             
             }            
             $id = $volunteers['id'];
             $email = $volunteers['email'];
@@ -71,7 +70,7 @@ class VolunteerController extends Controller
             return ["ok"=>true, "msg"=>"Volunteer Updated Successfuly"];
         }else{
             $volunteers = $request->toArray();      
-            $newID = 'ECMS-'.date('d').rand(100,900).date('i');      
+            $newID = $request->get('volunteer_id');      
             $volunteers['volunteer_id'] = $newID;
             $volunteers['password'] = Hash::make($newID);
             unset($volunteers['id']);
@@ -81,15 +80,7 @@ class VolunteerController extends Controller
             }
 
             Volunteer::insert($volunteers);
-            User::insert([
-                'first_name'=>$volunteers['name'],
-                'email'=>$newID,
-                'lga'=>$volunteers[null],
-                'state'=>null,
-                'password'=>Hash::new($newID),
-                'role'=>'user'
-            ]);
-            //return Inertia::render('volunteers',$this->data());
+           //return Inertia::render('volunteers',$this->data());
             return ["ok"=>true, "msg"=>"Volunteer Created with the ID: $newID"];
         }
     }
@@ -104,6 +95,79 @@ class VolunteerController extends Controller
         return Volunteer::with('team')->paginate(500);
     }
 
+    public function uploadData(Request $request){
+        try{
+
+            $datas = $this->fileToArray($request->file_to_upload); 
+            $errors = "";        
+            $volunteerIds = Volunteer::pluck("volunteer_id")->toArray();
+            $insertData = [];
+            foreach ($datas as $index => &$data) {
+                if(isset($data['volunteer_id'])){
+                    if(!in_array($data['volunteer_id'], $volunteerIds)){
+
+                        if($request->get('user_type')=='Party Member'){
+                            $data['department_id'] = $request->get('department_id');
+                            $data['status_id'] = $request->get('status_id');
+                        }
+                        if(isset($data['password'])){
+                            $data['password'] = Hash::make($data['password']);
+                        }else{
+                            $data['password'] = Hash::make($data['volunteer_id']);                    
+                        }
+                    }else{
+                        $errors .= '<p style="font-size:0.8em !important;margin:1px">Error: Already exist volunteer ID on line '. $index+1 . ' </p> ';                
+                        
+                    }
+                }else{                    
+                    $errors .= '<p style="font-size:0.8em !important;margin:1px">Error: Volunteer ID required on  line '. $index+1 . ' </p> ';                
+                }
+            }
+            
+            if($errors ==''){
+                Volunteer::insert($datas);
+                return ["ok"=>true, "msg"=>'uploaded successfuly'];
+            }else{
+                return ["ok"=>false, "msg"=>$errors];
+            }
+            
+        }catch(\Exception $e){
+
+            return ["ok"=>false, "msg"=>$e->getMessage()];
+        }
+    }
+
+    public function fileToArray($filename = '', $delimiter = ',')
+    {
+        if (!file_exists($filename) || !is_readable($filename))
+            return response()->json(['error' => "Error while reading file"], 400);
+
+        $header = null;
+        $data = array();
+        if (($handle = fopen($filename, 'r')) !== false) {
+            while (($row = fgetcsv($handle, 1000, $delimiter)) !== false) {
+                if (!$header){
+                    $header =  $row;
+                    foreach($header as &$hd){
+                        $hd = strtolower($hd);
+                    }                
+                }
+                else{
+                    if(sizeof($header) != sizeof($row)){
+                        if(sizeof($header) > sizeof($row)){
+                           $row[] = '';
+                        }else{
+                            unset($row[sizeof($row)-1]);
+                        }
+                    }                    
+                    $data[] = array_combine($header, $row);                
+                }                    
+            }
+            fclose($handle);
+        }
+
+        return $data;
+    }
     
     /**
      * Store a newly created resource in storage.

@@ -172,9 +172,12 @@ TypingInterval()
             </div>
             <div style="height:75px;"></div>
             <div v-for="user in users.data" :id="user.id+'user'" @click="fetchConversation(user.id, $event)" :key="user.id+'_c'">
-                <div  v-if="user.id !== currentUser.id"  class="d-flex w-100 align-items-center user-x " style="user-select:none;" >                                                                        
-                    <img :src="'/photos/'+user?.image" width="50" style="border-radius:50px;" class="img1" />
-                    <div class="py-3 pl-1 w-100" style=" border-bottom:1px solid #ccc;height: 100%;user-select: none;">
+                <div  v-if="user.id !== currentUser.id"  class="d-flex px-2 w-100 align-items-center user-x " style="user-select:none;" >                                                                        
+                    <span v-show="user?.image == ''">                    
+                        <img :src="'/photos/'+user?.image" width="50" style="border-radius:50px;" class="img1" />
+                    </span>
+                     <i v-show="user.image !== ''" class="bi bi-person-fill img1" style=" font-size: 2.3em;background: black;color: white;border-radius: 50px;display: flex;"></i>
+                    <div class="py-3 pl-2 w-100" style=" border-bottom:1px solid #ccc;height: 100%;user-select: none;">
                         <span class="name">{{user.first_name}} {{user.surname}}</span> 
                          (<span class="name">{{user.email.slice(1,14)}}</span>)
                     </div>                    
@@ -198,7 +201,7 @@ TypingInterval()
                                         <div class="pstyle pb-2 d-inline-block" > 
                                             <p v-if="chat.message_type=='text'" style="font-size:0.97em" class="mb-0">{{chat.message}}</p>
                                             <div v-show="chat.message_type=='image'" class="mb-0">                                                
-                                                <img :src="'/uploads/'+chat.message" style="width:35%" />
+                                                <img :src="'/uploads/'+chat.message" style="width:100px" />
                                                 <p>{{chat.message}}</p>
                                             </div>
                                             <p v-if="chat.message_type=='file'" class="mb-0"> 

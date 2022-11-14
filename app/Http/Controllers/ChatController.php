@@ -65,15 +65,15 @@ class ChatController extends Controller
 
 
         $newMessage = Chat::create($message);        
-        $user = User::find($from_user_id);
-        $messageTo = User::find($to_user_id);
+        $user = Volunteer::find($from_user_id);
+        $messageTo = Volunteer::find($to_user_id);
 
         broadcast(new MessageSent($user, $newMessage, $messageTo))->toOthers();
         return $newMessage;
     }
 
     public function typing(Request $request){
-        $user = User::find($request->get('from_user_id'));        
+        $user = Volunteer::find($request->get('from_user_id'));        
         $toID = $request->get('to_user_id');
         broadcast(new ChatTyping($user, toID:$toID))->toOthers();
         return "true";

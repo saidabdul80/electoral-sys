@@ -54,6 +54,7 @@ Route::get('/volunteer_management',[VolunteerController::class,'index'])->middle
 Route::post('/add_volunteer',[VolunteerController::class,'addVolunteers'])->middleware(['auth', 'verified', 'adminAuth'])->name('add_volunteer');
 Route::get('/volunteers',[VolunteerController::class,'all'])->middleware(['auth', 'verified', 'adminAuth'])->name('volunteers');
 Route::get('/volunteers_not_in_team/{team_id}',[VolunteerController::class,'volunteers_not_in_team'])->middleware(['auth', 'verified', 'adminAuth'])->name('volunteers_not_in_team');
+Route::post('/upload_volunteer_data',[VolunteerController::class,'uploadData'])->middleware(['auth', 'verified'])->name('upload_volunteer_data');
 
 Route::get('/voter_database',[VoterDatabaseController::class,'index'])->middleware(['auth', 'verified', 'adminAuth'])->name('voter_database');
 Route::post('/add_voters',[VoterDatabaseController::class,'addVoters'])->middleware(['auth', 'verified', 'adminAuth'])->name('add_voters');
@@ -93,6 +94,7 @@ Route::post('/typing',[ChatController::class,'typing'])->middleware(['auth', 've
 
 Route::get('/chats',[ChatController::class,'index'])->middleware(['auth', 'verified'])->name('chats');
 Route::post('/fetch_conversation',[ChatController::class,'fetchConversation'])->middleware(['auth', 'verified'])->name('fetch_conversation');
+
 
 Route::get('/settings',[SettingController::class,'index'])->middleware(['auth', 'verified', 'adminAuth'])->name('settings');
 Route::get('/profile',[ProfileController::class,'index'])->middleware(['auth', 'verified', 'adminAuth'])->name('profile');

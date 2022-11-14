@@ -117,6 +117,24 @@ const submit = () => {
     },
   });
 };
+function showAlert(msg,icon='success'){
+    const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.addexpenseListener('mouseenter', Swal.stopTimer)
+        toast.addexpenseListener('mouseleave', Swal.resumeTimer)
+    }
+    })
+
+    Toast.fire({
+    icon: icon,
+    title: msg
+    })
+}
 </script>
 <template>
   <HEADER></HEADER>
