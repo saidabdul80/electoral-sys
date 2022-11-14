@@ -50,14 +50,13 @@ async function fetchConversation(volunteer_id, e) {
     data.is_typing =false
     data.conversation_with_id = volunteer_id;
     let response =  await axios.post(`/fetch_conversation`,{from_user_id: props.currentUser.id,to_user_id:volunteer_id});    
-    data.conversations = response.data;
-    console.table(response.data); 
+    data.conversations = response.data;    
     data.loading = false;
     
 }
 
 function checkUser(user_id){
-    if(props.currentUser.id === user_id){
+    if(props.currentUser.id == user_id){
         return "float-right";
     }else{
         return "float-left";
@@ -65,7 +64,7 @@ function checkUser(user_id){
 }
 
 function checkUser2(user){
-    if(props.currentUser.id === user.from_user_id){        
+    if(props.currentUser.id == user.from_user_id){        
         if(user.read){            
             return "float-right text-primary";
         }else{
@@ -77,7 +76,7 @@ function checkUser2(user){
 }
 
 function checkUserForColor(user_id){
-    if(props.currentUser.id === user_id){
+    if(props.currentUser.id == user_id){
         return "bg_faint2 round1";
     }else{
         return "bg-white round2";
