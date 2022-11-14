@@ -52,6 +52,9 @@ async function fetchConversation(volunteer_id, e) {
     let response =  await axios.post(`/fetch_conversation`,{from_user_id: props.currentUser.id,to_user_id:volunteer_id});    
     data.conversations = response.data;    
     data.loading = false;
+    setTimeout(()=>{
+        gotoBottom('main-chat-env')
+    },50)
     
 }
 
@@ -100,9 +103,14 @@ async function uploadMessageFile(e){
         data.conversations[index]= response.data;        
     }
 }
+function gotoBottom(id){
+   var element = document.getElementById(id);
+   
+   element.scrollTop = element.scrollHeight - element.clientHeight;
+}
 
-async function sendMessage(e,btn=false){    
-    if(e.key === "Enter" || btn == true){
+async function sendMessage(e,btn=false){      
+    if(e.key === "Enter" || btn == true){ 
        let index = data.conversations.length;
        let text = $("#textField").val();
         if(text !== ''){
@@ -129,6 +137,9 @@ window.Echo.private('chat')
 
         if(e.user.id==data.conversation_with_id){
             data.conversations.push(e.message)
+            setTimeout(()=>{
+                gotoBottom('main-chat-env')
+            },500)
         }
       /*   if(e.messageTo.id==props.currentUser.id){
             data.conversations.push(e.message)
@@ -193,7 +204,7 @@ function changeTab(){
                         <button @click="changeTab()" class="shadow btn bg-white mt-2 ml-2 mr-2"><i class="bi bi-arrow-left text-dark"></i></button>
                         <span class="d-inline-block p-3" v-if="data.is_typing">typing ...</span>       
                     </div>
-                    <div class="main  px-4" style="height:65vh; overflow-y:scroll;overflow-x: none; overflow-anchor: none;">
+                    <div id="main-chat-env" class="main  px-4" style="height:65vh; overflow-y:scroll;overflow-x: none; overflow-anchor: none;">
 
                         <div class="px-2">
                             <div style="clear:both; margin-top: 4px;" v-for="chat in data.conversations" :key="chat.id+'_ch'">                            
