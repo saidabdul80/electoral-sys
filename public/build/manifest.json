@@ -436,49 +436,49 @@
       "assets/XDashboard.422332ed.css"
     ]
   },
+  "resources/js/Pages/Dashboard.css": {
+    "file": "assets/Dashboard.2fdf7c6f.css",
+    "src": "resources/js/Pages/Dashboard.css"
+  },
   "sweetalert2.css": {
     "file": "assets/sweetalert2.e7e3a94b.css",
     "src": "sweetalert2.css"
-  },
-  "resources/js/Pages/Team.css": {
-    "file": "assets/Team.cfedb6d9.css",
-    "src": "resources/js/Pages/Team.css"
-  },
-  "resources/js/Pages/Users.css": {
-    "file": "assets/Users.959697f1.css",
-    "src": "resources/js/Pages/Users.css"
-  },
-  "resources/js/Pages/DataUpload.css": {
-    "file": "assets/DataUpload.0575c074.css",
-    "src": "resources/js/Pages/DataUpload.css"
-  },
-  "resources/js/Pages/Volunteers.css": {
-    "file": "assets/Volunteers.c90d88f3.css",
-    "src": "resources/js/Pages/Volunteers.css"
-  },
-  "Panel.css": {
-    "file": "assets/Panel.b981a658.css",
-    "src": "Panel.css"
   },
   "resources/js/Pages/Expenses.css": {
     "file": "assets/Expenses.62f830c3.css",
     "src": "resources/js/Pages/Expenses.css"
   },
-  "resources/js/Pages/Dashboard.css": {
-    "file": "assets/Dashboard.2fdf7c6f.css",
-    "src": "resources/js/Pages/Dashboard.css"
-  },
-  "datatables.css": {
-    "file": "assets/datatables.dfde75bf.css",
-    "src": "datatables.css"
+  "Panel.css": {
+    "file": "assets/Panel.b981a658.css",
+    "src": "Panel.css"
   },
   "resources/js/Pages/Chat.css": {
     "file": "assets/Chat.16596e66.css",
     "src": "resources/js/Pages/Chat.css"
   },
+  "resources/js/Pages/Users.css": {
+    "file": "assets/Users.959697f1.css",
+    "src": "resources/js/Pages/Users.css"
+  },
+  "resources/js/Pages/Team.css": {
+    "file": "assets/Team.cfedb6d9.css",
+    "src": "resources/js/Pages/Team.css"
+  },
   "resources/js/Pages/XDashboard.css": {
     "file": "assets/XDashboard.422332ed.css",
     "src": "resources/js/Pages/XDashboard.css"
+  },
+  "resources/js/Pages/Volunteers.css": {
+    "file": "assets/Volunteers.c90d88f3.css",
+    "src": "resources/js/Pages/Volunteers.css"
+  },
+  "resources/js/Pages/DataUpload.css": {
+    "file": "assets/DataUpload.0575c074.css",
+    "src": "resources/js/Pages/DataUpload.css"
+  },
+  "datatables.css": {
+    "file": "assets/datatables.dfde75bf.css",
+    "src": "datatables.css"
   },
   "resources/js/app.css": {
     "file": "assets/app.d296a642.css",
