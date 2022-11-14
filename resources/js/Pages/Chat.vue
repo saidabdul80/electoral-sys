@@ -25,6 +25,7 @@ const props = defineProps({
 
 
 const data = reactive({
+  chatTab:true,
   loading:false,
   conversations:[],
   conversation_with_id:0,
@@ -151,7 +152,9 @@ window.Echo.private('chat-typing')
       
 });
 TypingInterval()
-
+function changeTab(){    
+    data.chatTab = !data.chatTab
+}
 </script>
 <template class="">
   <HEADER class="bg-white text-dark"></HEADER>
@@ -162,7 +165,7 @@ TypingInterval()
       <h4 class="ml-3 my-0 ">Chats</h4>
     </div>
     <div  style="height:78vh;box-shadow:2px 8px 27px -12px #888;" class="chat-page row mx-auto w-100">
-        <div id="chat-list" class="position-relative px-0 col-md-3 bg-white " style="height:100%; overflow-y:scroll">
+        <div id="chat-list" v-show="data.chatTab" class="position-relative px-0 col-md-3 bg-white " style="height:100%; overflow-y:scroll">
             <div class="mt-3 px-3 mb-3 position-absolute bg-white w-100 ">
                 <input type="text" class="bg-light form-control w-10 rounded" placeholder="Search or start new chat" >
             </div>
@@ -187,9 +190,11 @@ TypingInterval()
             <div class="">
                 <div class="wrapper position-relative">
                     <div  class="chat-env-header bg-light"> 
+                        <button @click="changeTab()" class="shadow btn bg-white mt-2 ml-2 mr-2"><i class="bi bi-arrow-left text-dark"></i></button>
                         <span class="d-block p-3" v-if="data.is_typing">typing ...</span>       
                     </div>
-                    <div class="main  px-4" style="height:65vh; overflow-y:scroll;overflow-x: none;">
+                    <div class="main  px-4" style="height:65vh; overflow-y:scroll;overflow-x: none; overflow-anchor: none;">
+
                         <div class="px-2">
                             <div style="clear:both; margin-top: 4px;" v-for="chat in data.conversations" :key="chat.id+'_ch'">                            
                                 <div :class="checkUser(chat.from_user_id)" class="pt-2">                            
