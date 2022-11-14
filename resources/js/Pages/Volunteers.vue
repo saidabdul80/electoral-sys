@@ -198,7 +198,7 @@ function changePage(page){
     <div class="row w-100">
         <div class="col-md-7">
             <div class="row w-100">
-                <button @click="data.switch='uploads'" :disabled="data.switch=='uploads'" class="w-1x  mb-3 btn btn-sm bg-dark text-white">Upload</button>
+                <button @click="data.switch='uploads'" :disabled="data.switch=='uploads'" class="w-1x ml-3  mb-3 btn btn-sm bg-dark text-white">Upload</button>
                 <button @click="add()" :disabled="data.switch=='add'" class="w-1x ml-3 mb-3 btn btn-sm bg-dark text-white">Add </button>
                 <div class="col-sm-12 col-md-4">
                     <button @click="data.switch='list'" :disabled="data.switch=='list'" class="w-1x ml-3 mb-3 btn btn-sm bg-dark text-white mx-auto">List of {{data.page}}</button>
@@ -207,12 +207,12 @@ function changePage(page){
         </div>
         <div class="col-md-5 mt-1">
             <div>
-                <button @click="changePage('volunteers')" :disabled="data.page=='volunteers'" class="w-1x m-0 btn btn-sm bg-success text-white">Volunteers</button>
-                <button @click="changePage('party members')" :disabled="data.page=='party members'" class="w-1x ml-3 mt-0 btn btn-sm bg-success text-white">Party Members</button>
+                <button @click="changePage('volunteers')" :disabled="data.page=='volunteers'" class="w-1x  btn btn-sm bg-success text-white">Volunteers</button>
+                <button @click="changePage('party members')" :disabled="data.page=='party members'" class="w-1x  mt-0 btn btn-sm bg-success text-white">Party Members</button>
             </div>
         </div>        
     </div>
-    <div v-if="data.page=='volunteers'">
+    <div v-if="data.page=='volunteers'"> 
         <div v-show="data.switch=='list'" class="px-3" >
             <table class="table table-bordered">
                 <thead>

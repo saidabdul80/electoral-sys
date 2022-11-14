@@ -61,13 +61,13 @@ const props = defineProps(['active']);
             <span class="nav_name hidename">Profile</span>
           </Link>
           
+          <Link :href="route('logout')" method="get" class="nav_link">
+            <i class="nav_ico ico-org bi bi-box-arrow-in-right h5  pl-2 nav_icon"></i>
+            <span class="nav_name hidename">SignOut</span>
+          </Link>
           
         </div>
       </div>
-      <Link :href="route('logout')" method="get" class="nav_link">
-        <i class="nav_ico ico-org bi bi-box-arrow-in-right h5  pl-2 nav_icon"></i>
-        <span class="nav_name hidename">SignOut</span>
-      </Link>
     </nav>
   </div>
 </template>
