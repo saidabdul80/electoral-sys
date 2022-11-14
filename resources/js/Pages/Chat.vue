@@ -51,6 +51,7 @@ async function fetchConversation(volunteer_id, e) {
     data.conversation_with_id = volunteer_id;
     let response =  await axios.post(`/fetch_conversation`,{from_user_id: props.currentUser.id,to_user_id:volunteer_id});    
     data.conversations = response.data;
+    console.table(response.data); 
     data.loading = false;
     
 }
@@ -172,13 +173,13 @@ function changeTab(){
             <div style="height:75px;"></div>
             <div v-for="user in users.data" :id="user.id+'user'" @click="fetchConversation(user.id, $event)" :key="user.id+'_c'">
                 <div  v-if="user.id !== currentUser.id"  class="d-flex px-2 w-100 align-items-center user-x " style="user-select:none;" >                                                                        
-                    <span v-show="user?.image == ''">                    
-                        <img :src="'/photos/'+user?.image" width="50" style="border-radius:50px;" class="img1" />
+                    <span v-if="user?.image == ''">                    
+                        <img :src="'/photos/'+user.image" width="50" style="border-radius:50px;" class="img1" />
                     </span>
-                     <i v-show="user.image !== ''" class="bi bi-person-fill img1" style=" font-size: 2.3em;background: black;color: white;border-radius: 50px;display: flex;"></i>
+                     <i v-else class="bi bi-person-fill img1" style=" font-size: 2.3em;background: black;color: white;border-radius: 50px;display: flex;"></i>
                     <div class="py-3 pl-2 w-100" style=" border-bottom:1px solid #ccc;height: 100%;user-select: none;">
                         <span class="name">{{user.first_name}} {{user.surname}}</span> 
-                         (<span class="name">{{user.email.slice(1,14)}}</span>)
+                         (<span class="name">{{user.email.slice(0,14)}}</span>)
                     </div>                    
                 </div>  
             </div>
@@ -191,7 +192,7 @@ function changeTab(){
                 <div class="wrapper position-relative">
                     <div  class="chat-env-header bg-light"> 
                         <button @click="changeTab()" class="shadow btn bg-white mt-2 ml-2 mr-2"><i class="bi bi-arrow-left text-dark"></i></button>
-                        <span class="d-block p-3" v-if="data.is_typing">typing ...</span>       
+                        <span class="d-inline-block p-3" v-if="data.is_typing">typing ...</span>       
                     </div>
                     <div class="main  px-4" style="height:65vh; overflow-y:scroll;overflow-x: none; overflow-anchor: none;">
 
@@ -201,7 +202,7 @@ function changeTab(){
                                     <div :class="checkUserForColor(chat.from_user_id)" class="d-inline-block align-items-center pt shdowx">                                       
                                         <div class="pstyle pb-2 d-inline-block" > 
                                             <p v-if="chat.message_type=='text'" style="font-size:0.97em" class="mb-0">{{chat.message}}</p>
-                                            <div v-show="chat.message_type=='image'" class="mb-0">                                                
+                                            <div v-if="chat.message_type=='image'" class="mb-0">                                                
                                                 <img :src="'/uploads/'+chat.message" style="width:100px" />
                                                 <p>{{chat.message}}</p>
                                             </div>
