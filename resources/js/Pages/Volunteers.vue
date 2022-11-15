@@ -422,11 +422,11 @@ function changePage(page){
                     <div class="col-md-4 mb-2">  
                         <label>Date of Birth</label>                      
                         <input v-model="form.dob" type="date" class="form-control">                            
-                    </div> 
-                    <div class="col-md-4 mb-2">  
+                    </div>  
+                    <div class="col-md-4 mb-2">        
                         <label>Password</label>                      
-                        <input v-model="form.password" type="date" class="form-control">                            
-                    </div>                                 
+                        <input v-model="form.password" type="password" class="form-control">                            
+                    </div>              
                     <input v-model="form.id" type="text" class="form-control d-none">                                                        
                     <div class="col-md-4 mb-2">
                         <label style="visibility: hidden;">Area Description</label>                      

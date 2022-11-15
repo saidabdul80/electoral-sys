@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\ChatMessage;
 use App\Events\ChatTyping;
+use App\Events\MessageNotification;
 use App\Events\MessageSent;
 use App\Models\Chat;
 use App\Models\User;
@@ -32,7 +33,10 @@ class ChatController extends Controller
         //return view('chat',['users'=> $users]); */
         return Inertia::render('Chat',['users'=>$users, 'currentUser'=>$currentUser]);
     }
-
+    public function fetchStatus(Request $request){
+        $from_user_id = $request->get('from_user_id');
+        return Chat::where(['to_user_id'=>$from_user_id, 'read'=>0])->get()->count();
+    }
 
     public function sendMessage(Request $request)
     {
@@ -68,7 +72,7 @@ class ChatController extends Controller
         $user = Volunteer::find($from_user_id);
         $messageTo = Volunteer::find($to_user_id);
 
-        broadcast(new MessageSent($user, $newMessage, $messageTo))->toOthers();
+        broadcast(new MessageSent($user, $newMessage, $messageTo))->toOthers();        
         return $newMessage;
     }
 
@@ -79,79 +83,25 @@ class ChatController extends Controller
         return "true";
     }
 
+    public function markRead(Request $request){                
+        //$res = Chat::where('from_user_id',$request->to_user_id)->update(['read' => 1]);        
+        $token2 = $request->to_user_id.$request->from_user_id;
+        Chat::where(['token'=>$token2])->update(['read' => '1']); 
+        $user = Volunteer::find($request->from_user_id);//current login
+        $messageTo = Volunteer::find($request->to_user_id);           
+        MessageSent::dispatch($user, null, $messageTo, true);  
+    }
+
     public function fetchConversation(Request $request)
     {   
-        $token1 = $request->from_user_id.$request->to_user_id;
+        $token1 = $request->from_user_id.$request->to_user_id;//current user
         $token2 = $request->to_user_id.$request->from_user_id;
-        Chat::where('from_user_id',$request->to_user_id)->update(['read' => '1']);
-        $chats = Chat::where('token',$token1)->orWhere('token',$token2)->get();
+       
+        $chats = Chat::where('token',$token1)->orWhere('token',$token2)->get();            
+        $this->markRead($request);
         return $chats;                
     }
 
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Chat  $chat
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Chat $chat)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Chat  $chat
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Chat $chat)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Chat  $chat
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Chat $chat)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Chat  $chat
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Chat $chat)
-    {
-        //
-    }
+    
 }

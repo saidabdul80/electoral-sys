@@ -89,8 +89,10 @@ Route::post('/add_team_member',[TeamMemberController::class,'addTeamMember'])->m
 Route::post('/remove_team_member',[TeamMemberController::class,'removeTeamMember'])->middleware(['auth', 'verified', 'adminAuth'])->name('remove_team_member');
 
 
+Route::post('/fetch_status',[ChatController::class,'fetchStatus'])->middleware(['auth', 'verified'])->name('fetch_status');
 Route::post('/send_message',[ChatController::class,'sendMessage'])->middleware(['auth', 'verified'])->name('send_message');
 Route::post('/typing',[ChatController::class,'typing'])->middleware(['auth', 'verified'])->name('typing');
+Route::post('/mark_read',[ChatController::class,'markRead'])->middleware(['auth', 'verified'])->name('mark_read');
 
 Route::get('/chats',[ChatController::class,'index'])->middleware(['auth', 'verified'])->name('chats');
 Route::post('/fetch_conversation',[ChatController::class,'fetchConversation'])->middleware(['auth', 'verified'])->name('fetch_conversation');

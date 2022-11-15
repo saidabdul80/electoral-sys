@@ -276,8 +276,7 @@ function overAllAnalysis(idx, data,label,text,background,bcolor,con=true){
         },
         plugins: [ChartDataLabels],
         options: {
-            onClick: (e) => {
-            alert();
+            onClick: (e) => {            
             const canvasPosition = getRelativePosition(e, chart);
             const dataX = chart.scales.x.getValueForPixel(canvasPosition.x);
             const dataY = chart.scales.y.getValueForPixel(canvasPosition.y);

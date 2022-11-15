@@ -23,6 +23,10 @@ Broadcast::channel('chat', function ($user) {
     return $user;
 });
 
+Broadcast::channel('notify-x', function ($user) {
+    return $user;
+});
+
 Broadcast::channel('chat-typing', function ($user) {    
     return $user;
 });

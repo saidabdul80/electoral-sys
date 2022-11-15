@@ -1,6 +1,6 @@
 <script setup>
 import { reactive } from '@vue/reactivity';
-import { Head, Link, useForm,Inertia } from "@inertiajs/inertia-vue3";
+import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
 import HEADER from "./../Components/Header.vue";
 import SIDENAV from "./../Components/Sidenav.vue";
 import PAGINATE from "./../Components/Paginate.vue";
@@ -8,7 +8,9 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-
+import Swal from 'sweetalert2/dist/sweetalert2.js'
+import 'sweetalert2/dist/sweetalert2.css'
+import { Inertia } from '@inertiajs/inertia'
 const props = defineProps({
   canLogin: Boolean,
   canRegister: Boolean,

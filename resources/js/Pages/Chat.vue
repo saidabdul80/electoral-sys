@@ -43,7 +43,11 @@ const formUpload = useForm({
 
 
 async function fetchConversation(volunteer_id, e) {
-    //e.stopPropagation();    
+    //e.stopPropagation(); 
+    if($(window).width() < 960 ){
+        data.chatTab = false
+    }
+       
     $('.user-x').parent().removeClass('activex');
     $('#'+volunteer_id+'user').addClass('activex');
     data.loading = true; 
@@ -55,6 +59,8 @@ async function fetchConversation(volunteer_id, e) {
     setTimeout(()=>{
         gotoBottom('main-chat-env')
     },50)
+
+    
     
 }
 
@@ -104,8 +110,7 @@ async function uploadMessageFile(e){
     }
 }
 function gotoBottom(id){
-   var element = document.getElementById(id);
-   
+   var element = document.getElementById(id);   
    element.scrollTop = element.scrollHeight - element.clientHeight;
 }
 
@@ -132,18 +137,20 @@ function typing(e){
 }
 
 window.Echo.private('chat')
-  .listen('MessageSent', (e) => {
-    if(data.conversation_with_id != 0){
+  .listen('MessageSent', (e) => {    
+    if(e.noti == false){
+        if(data.conversation_with_id != 0){
+            if(e.user.id==data.conversation_with_id){
+                data.conversations.push(e.message)
 
-        if(e.user.id==data.conversation_with_id){
-            data.conversations.push(e.message)
-            setTimeout(()=>{
-                gotoBottom('main-chat-env')
-            },500)
+                setTimeout(()=>{
+                    gotoBottom('main-chat-env')
+                },500)
+            }
+          /*   if(e.messageTo.id==props.currentUser.id){
+                data.conversations.push(e.message)
+            } */
         }
-      /*   if(e.messageTo.id==props.currentUser.id){
-            data.conversations.push(e.message)
-        } */
     }
 
 });

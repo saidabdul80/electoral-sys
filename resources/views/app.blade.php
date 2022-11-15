@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
     <script>
+       window.authUser = {!! auth()->user() !!}       
         window.Laravel = 
         {!!
             json_encode([
