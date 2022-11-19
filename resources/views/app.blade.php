@@ -17,11 +17,8 @@
                 ])
         !!};
 </script>
-    <!-- Fonts -->
-    <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap">
+    <!-- Fonts -->    
     <style>
-        @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap");
-
         :root {
             --header-height: 3rem;
             --nav-width: 68px;

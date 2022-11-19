@@ -4,8 +4,6 @@ import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
 import HEADER from "./../Components/Header.vue";
 import SIDENAV from "./../Components/Sidenav.vue";
 import PAGINATE from "./../Components/Paginate.vue";
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 
 import Swal from 'sweetalert2/dist/sweetalert2.js'
