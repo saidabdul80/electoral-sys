@@ -357,10 +357,10 @@ function getColorCode(v){
 
 <template>
     <Head title="Welcome" />
-    <div>
+    <div style="background:white;">
         <LightLoader v-if="data.loading" />       
         <div class="config-x">
-            <Panel />
+            
             <i  @click="toggleConfig($event)" class=" bg-primary config-toggler ">
                 <i class="bi bi-arrow-right-short text-white config-toggler-ico"></i>
             </i>
