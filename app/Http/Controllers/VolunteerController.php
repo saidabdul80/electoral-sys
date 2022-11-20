@@ -34,10 +34,13 @@ class VolunteerController extends Controller
     public function index()
     {
         $volunteers = Volunteer::where('user_type','Volunteer')->paginate(10);        
-        $partyMembers = Volunteer::where('user_type','Party Member')->paginate(10);        
+        $partyMembers = Volunteer::where('user_type','Party Member')->paginate(10);   
+        $committeeMembers = Volunteer::where('user_type','Committee Member')->paginate(10);   
+             
         $data = $this->data();
         $data['volunteers']=$volunteers;
         $data['partyMembers']=$partyMembers;
+        $data['committeeMembers'] = $committeeMembers;
         return Inertia::render('Volunteers',$data);
     }
 

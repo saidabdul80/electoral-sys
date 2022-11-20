@@ -21,7 +21,8 @@ const props = defineProps({
   states:Array,
   departments:Array,
   statuses:Array,
-  partyMembers:Array
+  partyMembers:Array,
+  committeeMembers:Array,
 });
 const data = reactive({
   switch: "list",
@@ -148,10 +149,10 @@ const submit = async () => {
     if(response.data.ok == true){
         if(form.id == ''){            
             Swal.fire(response.data.msg, 'success')
-            Inertia.reload({ only: ['teams'] })
+            Inertia.reload()
         }else{
             showAlert(response.data.msg, 'success')
-            Inertia.reload({ only: ['teams'] })
+            Inertia.reload()
         }
     }else{
         showAlert('try again', 'error')
@@ -192,7 +193,7 @@ function changePage(page){
     </div>
     <div class="p-3 d-flex align-items-center">
       <i class="bi bi-stack"></i>
-      <h4 class="ml-3 my-0">Volunteers</h4>
+      <h4 class="ml-3 my-0">User Management</h4>
     </div>
     
     <div class="row w-100">
@@ -200,15 +201,16 @@ function changePage(page){
             <div class="row w-100">
                 <button @click="data.switch='uploads'" :disabled="data.switch=='uploads'" class="w-1x ml-3  mb-3 btn btn-sm bg-dark text-white">Upload</button>
                 <button @click="add()" :disabled="data.switch=='add'" class="w-1x ml-3 mb-3 btn btn-sm bg-dark text-white">Add </button>
-                <div class="col-sm-12 col-md-4">
+            <!--     <div class="col-sm-12 col-md-4">
                     <button @click="data.switch='list'" :disabled="data.switch=='list'" class="w-1x ml-3 mb-3 btn btn-sm bg-dark text-white mx-auto">List of {{data.page}}</button>
-                </div>
+                </div> -->
             </div>
         </div>
         <div class="col-md-5 mt-1">
             <div>
                 <button @click="changePage('volunteers')" :disabled="data.page=='volunteers'" class="w-1x  btn btn-sm bg-success text-white">Volunteers</button>
                 <button @click="changePage('party members')" :disabled="data.page=='party members'" class="w-1x  mt-0 btn btn-sm bg-success text-white">Party Members</button>
+                <button @click="changePage('committee members')" :disabled="data.page=='committee members'" class="w-1x  mt-0 btn btn-sm bg-success text-white">Committee Members</button>
             </div>
         </div>        
     </div>
@@ -307,8 +309,58 @@ function changePage(page){
             </table>
             <PAGINATE :next="partyMembers.next_page_url" :prev="partyMembers.prev_page_url"></PAGINATE>
         </div>
-    </div>
+    </div> 
     
+    <div v-if="data.page=='committee members'">
+        <div v-show="data.switch=='list'" class="px-3" >
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td>S/N</td>
+                        <td>Member ID</td>                    
+                        <td>Department</td>
+                        <td>Status</td>
+                        <td>Name</td>
+                        <td>Email</td>
+                        <td>Phone</td>
+                        <td>Address</td>
+                        <td>State</td>
+                        <td>LGA</td>
+                        <td>Ward</td>
+                        <td>Area</td>
+                        <td>Date of Birth</td>
+                        <td>Gender</td>
+                        <td>Pix</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(committeeMember,i) in committeeMembers.data" :key="i">
+                    <td>{{ committeeMembers.from + i }}</td>
+                    <td>{{committeeMember.committeeMember_id}}</td>                    
+                    <td>{{committeeMember.department}}</td>                    
+                    <td>{{committeeMember.status}}</td>                    
+                    <td>{{committeeMember.name}}</td>                    
+                    <td>{{committeeMember.email}}</td>                    
+                    <td>{{committeeMember.phone}}</td>                    
+                    <td>{{committeeMember.address}}</td>                    
+                    <td>{{committeeMember.state}}</td>
+                    <td>{{committeeMember.lga}}</td>
+                    <td>{{committeeMember.ward}}</td>
+                    <td>{{committeeMember.area}}</td>
+                    <td>{{committeeMember.dob}}</td>
+                    <td>{{committeeMember.gender}}</td>
+                    <td><img :src="committeeMember.image" alt="image"></td>
+                    <td>
+                        <button @click="edit(committeeMember,i)" class="btn btn-sm bg-primary text-white">Edit</button>
+                        <button class="btn btn-sm ml-2 bg-danger text-white">Delete</button>                        
+                    </td>                    
+                </tr>
+                </tbody>
+            </table>
+            <PAGINATE :next="committeeMembers.next_page_url" :prev="committeeMembers.prev_page_url"></PAGINATE>
+        </div>
+    </div>
     <div v-show="data.switch=='uploads'" class="px-3" >
         <a  class="ml-3 mb-3 btn btn-sm bg-primary text-white w-1x" href="template/volunteers_upload_template.csv" target="_blank">Download Template</a>
         <form @submit.prevent="uploadData()" class="mt-5 ml-5" enctype="multipart/form-data">                        
@@ -317,15 +369,16 @@ function changePage(page){
                 <select required v-model="formUpload.user_type" type="text" class="form-control">                            
                     <option value="Volunteer">Volunteer</option>
                     <option value="Party Member">Party Member</option>
+                    <option value="Committee Member">Committee Member</option>
                 </select>   
             </div>  
-            <div v-if="formUpload.user_type == 'Party Member'" class="col-md-4 mb-2">
+            <div v-if="formUpload.user_type != 'Volunteer'" class="col-md-4 mb-2">
                 <label>Select Status</label>                      
                 <select required v-model="formUpload.status_id" type="text" class="form-control">                            
                     <option v-for="(status) in statuses" :key="'dep_'+status.id" :value="status.id">{{status.name}}</option>
                 </select>   
             </div>         
-            <div v-if="formUpload.user_type=='Party Member'" class="col-md-4 mb-4">
+            <div v-if="formUpload.user_type!='Volunteer'" class="col-md-4 mb-4">
                 <label>Select Department</label>                      
                 <select required v-model="formUpload.department_id" type="text" class="form-control">                            
                     <option v-for="(department) in departments" :key="'dep_'+department.id" :value="department.id">{{department.name}}</option>
@@ -398,15 +451,16 @@ function changePage(page){
                         <select required v-model="form.user_type" type="text" class="form-control">                            
                             <option value="Volunteer">Volunteer</option>
                             <option value="Party Member">Party Member</option>
+                            <option value="Committee Member">Committee Member</option>
                         </select>   
                     </div>          
-                    <div v-if="form.user_type == 'Party Member'" class="col-md-4 mb-2">
+                    <div v-if="form.user_type != 'Volunteer'" class="col-md-4 mb-2">
                         <label>Department</label>                      
                         <select required v-model="form.department_id" type="text" class="form-control">                            
                             <option v-for="(department) in departments" :key="'dep_'+department.id" :value="department.id">{{department.name}}</option>
                         </select>   
                     </div>  
-                    <div v-if="form.user_type == 'Party Member'" class="col-md-4 mb-2">
+                    <div v-if="form.user_type != 'Volunteer'" class="col-md-4 mb-2">
                         <label>Status</label>                      
                         <select required v-model="form.status_id" type="text" class="form-control">                            
                             <option v-for="(status) in statuses" :key="'dep_'+status.id" :value="status.id">{{status.name}}</option>

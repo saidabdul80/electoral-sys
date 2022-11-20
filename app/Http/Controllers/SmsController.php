@@ -31,12 +31,12 @@ class SmsController extends Controller
      */
     public function send(Request $request)
     {
-        if($request->get('to') =='volunteers'){
-            //$recipient_phone_numbers = implode(',',Volunteer::all()->pluck('phone')->toArray());
-            $recipient_phone_numbers = Volunteer::all()->pluck('phone')->toArray();
+        if($request->get('to') =='voters'){
+            // $recipient_phone_numbers = implode(',',VoterDatabase::all()->pluck('phone')->toArray());
+             $recipient_phone_numbers = VoterDatabase::all()->pluck('phone')->toArray();
         }else{
-           // $recipient_phone_numbers = implode(',',VoterDatabase::all()->pluck('phone')->toArray());
-            $recipient_phone_numbers = VoterDatabase::all()->pluck('phone')->toArray();
+            //$recipient_phone_numbers = implode(',',Volunteer::all()->pluck('phone')->toArray());
+            $recipient_phone_numbers = Volunteer::where('user_type', $request->get('to'))->pluck('phone')->toArray();
         }
 
         $config = DB::table('smsconfiguration')->first();

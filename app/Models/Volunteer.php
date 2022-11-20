@@ -49,11 +49,22 @@ class Volunteer extends Authenticatable
         }      
     } 
 
+    public function getStateTotalVAttribute() { 
+        return VoterDatabase::where('state_id',$this->state_id)->count();        
+    } 
+    public function getLgaTotalVAttribute() { 
+        return VoterDatabase::where(['state_id'=>$this->state_id, 'lga_id'=>$this->lga_id])->count();
+    } 
+
+    public function getWardTotalVAttribute() { 
+        return VoterDatabase::where(['state_id'=>$this->state_id, 'lga_id'=>$this->lga_id, 'ward_id'=>$this->ward_id])->count();
+    } 
+    
 
     public function team()
     {
         return $this->belongsToMany(Team::class, 'team_members');        
     }
     
-    protected $appends = ['state','lga','ward', 'area','msisdn', 'status', 'department'];
+    protected $appends = ['state','lga','ward', 'area','msisdn', 'status', 'department','ward_total_v','state_total_v', 'lga_total_v'];
 }

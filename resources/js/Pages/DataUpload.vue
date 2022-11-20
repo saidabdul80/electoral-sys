@@ -8,6 +8,8 @@ import { Head, useForm, Link} from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia'
 import { computed } from '@vue/reactivity';
 import { onMounted, reactive} from 'vue';
+import HEADER from "./../Components/Header.vue";
+import SIDENAV from "./../Components/Sidenav.vue";
 import LightLoader from './../Components/LightLoader.vue';
 import axios from 'axios';
 
@@ -250,7 +252,13 @@ data.states = props.states
 
 <template>
   
-    <Head title="Dashboard" />
+  <HEADER></HEADER>
+  <SIDENAV active="data upload"></SIDENAV>
+  <div class="height-100 bg-light" id="body-pd">
+    <div class="p-3 d-flex align-items-center">
+      <i class="bi bi-stack"></i>
+      <h4 class="ml-3 my-0">Data Upload</h4>
+    </div>
     <LightLoader v-if="data.loading" />
     
     <AuthenticatedLayout>     
@@ -394,6 +402,8 @@ data.states = props.states
             </div>
         </div>
     </AuthenticatedLayout>    
+
+  </div>
 </template>
 <style scoped>
 .label{

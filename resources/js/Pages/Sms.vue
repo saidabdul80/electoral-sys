@@ -74,7 +74,11 @@ async function sendSMS() {
                         <label>All Voters</label>                      
                         <input  v-model="form.message_to" value="voters" name="to" type="radio" >                            
                         <label class="ml-2">All Volunteers</label>                      
-                        <input  v-model="form.message_to" value="volunteers" name="to" type="radio" >                            
+                        <input  v-model="form.message_to" value="Volunteers" name="to" type="radio" >
+                        <label class="ml-2">All Party Members</label>                      
+                        <input  v-model="form.message_to" value="Party Members" name="to" type="radio" >                            
+                        <label class="ml-2">All Committee Members</label>                      
+                        <input  v-model="form.message_to" value="Committee Members" name="to" type="radio" >                            
                     </div>
                 </div>
                 <div class="row mt-3">

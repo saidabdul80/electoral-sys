@@ -44,6 +44,10 @@ const props = defineProps(['active']);
             <i class="nav_ico ico-org bi-wallet-fill h5 pl-2"></i>
             <span class="nav_name hidename">Expenses</span>
           </Link>
+          <Link href="data-upload" data-toggle="tooltip" data-placement="top" title="data upload" :class="['nav_link',( active =='data upload'?'active':'')]">
+            <i class="nav_ico ico-org bi-file-earmark-plus h5 pl-2"></i>
+            <span class="nav_name hidename">Data Upload</span>
+          </Link>
           <Link href="chats" data-toggle="tooltip" data-placement="top" title="Chart" :class="['nav_link',( active =='Chats'?'active':'')]">
             <i class="nav_ico ico-org bi-chat-right-dots-fill h5 pl-2"></i>
             <span class="nav_name hidename">Chats</span>
@@ -56,10 +60,7 @@ const props = defineProps(['active']);
             <i class="nav_ico ico-org bi-gear h5 pl-2"></i>
             <span class="nav_name hidename">Settings</span>
           </Link>
-          <Link href="profile" data-toggle="tooltip" data-placement="top" title="Profile" :class="['nav_link',( active =='Profile'?'active':'')]">
-            <i class="nav_ico ico-org bi-stack h5 pl-2"></i>
-            <span class="nav_name hidename">Profile</span>
-          </Link>
+         
           
           <Link :href="route('logout')" method="get" class="nav_link">
             <i class="nav_ico ico-org bi bi-box-arrow-in-right h5  pl-2 nav_icon"></i>
