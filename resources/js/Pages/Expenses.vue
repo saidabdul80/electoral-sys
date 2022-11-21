@@ -153,7 +153,7 @@ function showAlert(msg,icon='success'){
   <div class="height-100 bg-light" id="body-pd">
     <div class="p-3 d-flex align-items-center">
       <i class="bi bi-stack"></i>
-      <h4 class="ml-3 my-0">Expenses Management</h4>
+      <h4 class="ml-3 my-0">Expenses Management </h4>
     </div>
     <div class="float-right">
         <button @click="data.page='expenses'" :disabled="data.page=='expenses'" class="ml-3 mb-3 btn btn-sm bg-dark text-white">Expenses</button>

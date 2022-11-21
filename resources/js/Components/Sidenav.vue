@@ -1,7 +1,18 @@
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3';
+import { reactive } from '@vue/reactivity';
 const props = defineProps(['active']);
+const data = reactive({
+  config:[],
+  upload_type:'',
+})
+axios.get('get_setting').then(function(res){
+  data.config = res.data
+})
 
+function filt(name){
+  return data.config.filter(item=>item.name == name)[0]?.value;
+}
 </script>
 <template>
   <div class="l-navbar bg-dark  p-0" id="nav-bar">
@@ -44,7 +55,7 @@ const props = defineProps(['active']);
             <i class="nav_ico ico-org bi-wallet-fill h5 pl-2"></i>
             <span class="nav_name hidename">Expenses</span>
           </Link>
-          <Link href="data-upload" data-toggle="tooltip" data-placement="top" title="data upload" :class="['nav_link',( active =='data upload'?'active':'')]">
+          <Link v-if="filt('upload_type') == 'uploads' " href="data-upload" data-toggle="tooltip" data-placement="top" title="data upload" :class="['nav_link',( active =='data upload'?'active':'')]">
             <i class="nav_ico ico-org bi-file-earmark-plus h5 pl-2"></i>
             <span class="nav_name hidename">Data Upload</span>
           </Link>

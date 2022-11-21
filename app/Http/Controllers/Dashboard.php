@@ -12,6 +12,7 @@ use App\Models\ElectionYear;
 use App\Models\Event;
 use App\Models\Expenses;
 use App\Models\Lga;
+use App\Models\Setting;
 use App\Models\State;
 use App\Models\Volunteer;
 use App\Models\VoterDatabase;
@@ -179,6 +180,13 @@ class Dashboard extends Controller
 
 
     public function getData(Request $request){
+        $config = Setting::where(['name'=>'upload_type'])->first();
+        if($config->value == 'uploads'){
+            return $this->getData3($request);
+        }
+        return $this->getData2($request);
+    }
+    public function getData3(Request $request){
         $queries = 
         [
             'state_id' =>$request->state_id,

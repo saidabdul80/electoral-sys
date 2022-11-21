@@ -2,7 +2,7 @@
 import { Head, Link } from "@inertiajs/inertia-vue3";
 import HEADER from "./../Components/Header.vue";
 import SIDENAV from "./../Components/Sidenav.vue";
-import VolunteersVue from "./Volunteers.vue";
+
 defineProps({
   canLogin: Boolean,
   canRegister: Boolean,
@@ -17,17 +17,20 @@ defineProps({
     wards:Number,
     unread:Number,
     partyMembers:Number,
-    committeeMembers:Number,
+    committeeMembers:Number,    
 }); 
+
 </script>
 <template>
   <HEADER></HEADER>
   <SIDENAV active="Dashboard"></SIDENAV>
   <div class="height-100 bg-light" id="body-pd">
     <div class="p-3 d-flex align-items-center">
-      <i class="bi bi-stack"></i>
-      <h4 class="ml-3 my-0">Main Components</h4>      
+        <Link href="/dashboard"  style="padding:14.6px 10px;">
+          <i class="bx bx-layer nav_logo-icon"></i><button class="btn btn-dark">Goto Dashboard 2</button>          
+      </Link>         
     </div>
+
     <div class="row">
         <div class="col-md-3 p-0 mt-3 px-2">
             <div class="py-3 bg-info text-white text-center h4 m-0">Voter</div>
@@ -101,6 +104,7 @@ defineProps({
         </div>
        
     </div>
+
   </div>
 </template>
 <style scoped>

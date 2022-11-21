@@ -44,6 +44,8 @@ Route::post('/save_data_entry', [DataUpload::class,'save'])->middleware(['auth',
 Route::post('/get_saved_data', [DataUpload::class,'getData'])->middleware(['auth', 'verified'])->name('get_saved_data');
 Route::post('/upload_slw', [DataUpload::class,'uploadSLW'])->middleware(['auth', 'verified'])->name('upload_slw');
 Route::post('/upload_records', [DataUpload::class,'uploadRecords'])->middleware(['auth', 'verified'])->name('upload_records');
+Route::post('/save_setting', [SettingController::class,'saveSetting'])->middleware(['auth', 'verified'])->name('save_setting');
+Route::get('/get_setting', [SettingController::class,'getSetting'])->middleware(['auth', 'verified'])->name('get_setting');
 
 Route::get('/dashboard',[Dashboard::class,'index'])->middleware(['auth', 'verified', 'adminAuth'])->name('dashboard');
 

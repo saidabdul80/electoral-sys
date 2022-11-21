@@ -15,7 +15,8 @@ class SettingController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Settings');
+        $settings = Setting::all();
+        return Inertia::render('Settings',['settings'=>$settings]);
     }
 
     /**
@@ -23,9 +24,24 @@ class SettingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function getSetting(Request $request){
+        return Setting::all();
+    }
+    public function saveSetting(Request $request)
     {
-        //
+        $data = $request->get('data');
+        
+        for($i=0; $i<count($data);$i++) {
+            unset($data[$i]['data']);
+            unset($data[$i]['id']);
+            unset($data[$i]['updated_at']);
+            unset($data[$i]['created_at']);
+            unset($data[$i]['deleted_at']);
+            unset($data[$i]['title']);
+        }        
+        
+        Setting::upsert($data,['name']);
+        return 'ok';
     }
 
     /**

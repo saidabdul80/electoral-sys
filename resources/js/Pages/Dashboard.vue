@@ -8,6 +8,9 @@ import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import LightLoader from './../Components/LightLoader.vue';
 import Panel from './Panel.vue';
+import HEADER from "./../Components/Header.vue";
+import SIDENAV from "./../Components/Sidenav.vue";
+
 const props = defineProps({   
     user: Object,
     config:Object,
@@ -357,7 +360,15 @@ function getColorCode(v){
 
 <template>
     <Head title="Welcome" />
-    <div style="background:white;">
+    <HEADER></HEADER>
+  <SIDENAV active="Dashboard"></SIDENAV>
+  <div class="height-100 bg-light" id="body-pd">
+    <div class="p-3 d-flex align-items-center">
+      <i class="bi bi-stack"></i>
+      <Link href="/xdashboard"  style="padding:14.6px 10px;">
+          <i class="bx bx-layer nav_logo-icon"></i><button class="btn btn-dark">Back Dashboard 1</button>          
+      </Link>      
+    </div>    
         <LightLoader v-if="data.loading" />       
         <div class="config-x">
             
@@ -591,8 +602,8 @@ function getColorCode(v){
 <style scoped>
 .config-x{
     position:fixed;
-    top:0px; 
-    left:0px; 
+    top:83px; 
+    left:107px; 
     z-index: 8;
     min-width:300px;
     padding:13px 15px; 
