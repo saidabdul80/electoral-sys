@@ -11,6 +11,9 @@ import HEADER from "./../Components/Header.vue";
 import SIDENAV from "./../Components/Sidenav.vue";
 import { onMounted } from "@vue/runtime-core";
 import PAGINATE from "./../Components/Paginate.vue";
+import './../../css/app.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import 'sweetalert2/dist/sweetalert2.css'
 import { Inertia } from '@inertiajs/inertia'

@@ -1,4 +1,7 @@
 <script setup>
+import './../../../css/app.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import Checkbox from '@/Components/Checkbox.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';

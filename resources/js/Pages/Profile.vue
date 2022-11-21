@@ -2,6 +2,9 @@
 import { Head, Link } from '@inertiajs/inertia-vue3';
 import HEADER from './../Components/Header.vue';
 import SIDENAV from './../Components/Sidenav.vue';
+import './../../css/app.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 defineProps({
     canLogin: Boolean,
     canRegister: Boolean,

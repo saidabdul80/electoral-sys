@@ -8,9 +8,12 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { Inertia } from '@inertiajs/inertia'
+import './../../css/app.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import 'sweetalert2/dist/sweetalert2.css'
-import { Inertia } from '@inertiajs/inertia'
 
 const props = defineProps({
   canLogin: Boolean,

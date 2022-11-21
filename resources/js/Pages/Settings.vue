@@ -4,6 +4,9 @@ import { reactive } from "@vue/reactivity";
 import HEADER from "./../Components/Header.vue";
 import { onMounted } from 'vue';
 import SIDENAV from "./../Components/Sidenav.vue";
+import './../../css/app.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import 'sweetalert2/dist/sweetalert2.css'
 const props = defineProps({

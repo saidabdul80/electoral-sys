@@ -2,6 +2,9 @@
 import { Head, Link } from '@inertiajs/inertia-vue3';
 import { reactive } from '@vue/reactivity';
 import { onMounted } from '@vue/runtime-core';
+import './../../css/app.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './../jquery.js';
 import './../dtables/datatable.css'
 import './../dtables/datatables.min.js'
 import Chart from 'chart.js/auto';

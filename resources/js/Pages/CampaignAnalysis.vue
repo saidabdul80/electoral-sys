@@ -1,5 +1,8 @@
 <script setup>
 import { Head, Link } from "@inertiajs/inertia-vue3";
+import './../../css/app.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import HEADER from "./../Components/Header.vue";
 import SIDENAV from "./../Components/Sidenav.vue";
 

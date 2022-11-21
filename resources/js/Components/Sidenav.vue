@@ -1,5 +1,6 @@
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import { reactive } from '@vue/reactivity';
 const props = defineProps(['active']);
 const data = reactive({

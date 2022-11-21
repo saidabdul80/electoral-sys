@@ -4,6 +4,9 @@
     import InputLabel from '@/Components/InputLabel.vue';
     import PrimaryButton from '@/Components/PrimaryButton.vue';
     import TextInput from '@/Components/TextInput.vue';
+    import './../../css/app.css';
+    import 'bootstrap/dist/css/bootstrap.min.css';
+    
     import './../dtables/datatable.css'
     import './../dtables/datatables.min.js'
     import Panel from './Panel.vue';
@@ -275,7 +278,7 @@ function selectUser(user){
             <!-- <Head title="Admin Config Panel" /> -->
             
             
-    </div>
+</div>
  </template>
 
     <style>

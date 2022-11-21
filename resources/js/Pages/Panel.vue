@@ -1,5 +1,7 @@
 <script setup>
     import { Head, Link } from '@inertiajs/inertia-vue3';
+    import './../../css/app.css';
+    import 'bootstrap/dist/css/bootstrap.min.css';
     
     defineProps({
         canLogin: Boolean,

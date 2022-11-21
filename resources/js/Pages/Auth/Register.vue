@@ -1,4 +1,7 @@
 <script setup>
+import './../../../css/app.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
