@@ -42,7 +42,7 @@ defineProps({
         <div class="col-md-3 p-0 mt-3 px-2">
             <div class="py-3 bg-info text-white text-center h4 m-0">Volunteers</div>
             <div class="text-info d-flex align-items-center justify-center bg-white m-0 h3">
-                <h5>{{Volunteers}}</h5>
+                <h5>{{volunteers}}</h5>
                 <i></i>
             </div>
         </div>
@@ -54,7 +54,7 @@ defineProps({
             </div>
         </div>
         <div class="col-md-3 p-0 mt-3 px-2"> 
-            <div class="py-3 bg-info text-white text-center h4 m-0">Party Members</div>
+            <div class="py-3 bg-info text-white text-center h4 m-0">Committee Members</div>
             <div class="text-info d-flex align-items-center justify-center bg-white m-0 h3">
                 <h5>{{committeeMembers}}</h5>
                 <i></i>
