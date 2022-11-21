@@ -245,7 +245,7 @@ class Dashboard extends Controller
         $unread = DB::table('chats')->where(['read'=>0,'to_user_id'=>auth()->user()->id])->get()->count();
 
         $data = [
-            'voluteers' =>$voluteers,
+            'volunteers' =>$voluteers,
             'partyMembers' =>$partyMember,
             'committeeMembers' =>$committeeMember,
             'voters' =>$voters,

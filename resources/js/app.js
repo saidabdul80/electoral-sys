@@ -1,7 +1,7 @@
 import './bootstrap';
 import '../css/app.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import './dtables/datatables.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './jquery.js';
 import { createApp, h } from 'vue';
