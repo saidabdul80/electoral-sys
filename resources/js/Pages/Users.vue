@@ -6,9 +6,9 @@
     import TextInput from '@/Components/TextInput.vue';
     import './../../css/app.css';
     import 'bootstrap/dist/css/bootstrap.min.css';
-    
+    import './jquery.js';
+    import './datatables.min.js';
     import './../dtables/datatable.css'
-    import './../dtables/datatables.min.js'
     import Panel from './Panel.vue';
     import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
     import { reactive } from '@vue/reactivity';

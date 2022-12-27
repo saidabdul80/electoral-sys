@@ -30,7 +30,6 @@ onMounted(()=>{
         console.log(props)
         data.loaded = true
         console.log(data) */
-
     },1000)
 
 })
@@ -92,7 +91,7 @@ function showAlert(msg,icon='success'){
                 </span>                            
             </div>
         </div>
-        <button @click="saveIt()" class="btn btn-success ">Save</button>
+        <button @click="saveIt()" class="btn btn-success">Save</button>
     </div>
   </div>
 </template>

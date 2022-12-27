@@ -1,6 +1,5 @@
 import './bootstrap';
-import './jquery.js';
-import './datatables.min.js';
+
 
 import { createApp, h } from 'vue';
 import { createInertiaApp, Link } from '@inertiajs/inertia-vue3';
